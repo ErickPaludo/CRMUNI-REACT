@@ -1,0 +1,42 @@
+.campo {
+  margin-bottom: 14px;
+}
+
+.campo-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.campo .MuiOutlinedInput-root {
+  background: #fff;
+  border-radius: 12px;
+  font-family: inherit;
+}
+
+.campo .MuiOutlinedInput-root .MuiOutlinedInput-input {
+  padding: 11px 14px;
+}
+
+.campo .MuiOutlinedInput-notchedOutline {
+  border-color: #e2e8f0;
+}
+
+.campo .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #cbd5e1;
+}
+
+.campo .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #2563eb;
+  border-width: 1px;
+}
+
+.campo .MuiOutlinedInput-root.Mui-error .MuiOutlinedInput-notchedOutline {
+  border-color: #dc2626;
+}
+
+.campo .MuiIconButton-root {
+  color: #94a3b8;
+}

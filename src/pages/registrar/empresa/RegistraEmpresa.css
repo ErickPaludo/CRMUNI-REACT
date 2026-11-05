@@ -1,0 +1,77 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700&display=swap");
+
+.registro-pagina {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 32px 16px;
+  box-sizing: border-box;
+  background: #f0f4f9;
+  font-family: "Inter", sans-serif;
+}
+
+.registro-form {
+  width: 100%;
+  max-width: 380px;
+}
+
+.registro-titulo {
+  margin: 0 0 12px;
+  font-family: "Outfit", sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.registro-subtitulo {
+  margin: 0 0 20px;
+  font-size: 15px;
+  color: #64748b;
+}
+
+.registro-etapa {
+  margin-bottom: 24px;
+  padding: 14px 16px;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  background: #eff6ff;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d4ed8;
+}
+
+.registro-botao,
+.registro-voltar {
+  width: 100%;
+  border-radius: 12px;
+  font-family: "Outfit", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.registro-botao.MuiButton-root {
+  height: 46px;
+  background: #2563eb;
+  font-size: 15px;
+  box-shadow: none;
+}
+
+.registro-botao.MuiButton-root:hover {
+  background: #1d4ed8;
+  box-shadow: none;
+}
+
+.registro-voltar.MuiButton-root {
+  height: 40px;
+  margin-bottom: 12px;
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.registro-rodape {
+  margin: 24px 0 0;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #94a3b8;
+}
