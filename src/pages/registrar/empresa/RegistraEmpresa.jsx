@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
+import { useNavigate } from "react-router-dom";
 import CampoTexto from "../../../components/CampoTexto";
+import { postJson } from "../../../hooks/http";
 import "./RegistraEmpresa.css";
 
 const etapas = {
@@ -47,6 +49,9 @@ const mascaraCnpj = (v) =>
 const RegistraEmpresa = () => {
   const [form, setForm] = useState(vazio);
   const [etapa, setEtapa] = useState(0);
+  const [erro, setErro] = useState("");
+  const [enviando, setEnviando] = useState(false);
+  const navigate = useNavigate();
   const grupo = grupos[etapa];
   const ultima = etapa === grupos.length - 1;
   const senhasDiferem =
@@ -60,12 +65,21 @@ const RegistraEmpresa = () => {
     setForm((f) => ({ ...f, [grupo]: { ...f[grupo], [nome]: valor } }));
   };
 
-  const enviar = (e) => {
+  const enviar = async (e) => {
     e.preventDefault(); // o `required` nativo já validou a etapa atual
     if (!ultima) return setEtapa(etapa + 1);
     if (senhasDiferem) return;
-    // TODO: enviar `form` para a API (endpoint ainda não definido)
-    console.log(form);
+    setErro("");
+    setEnviando(true);
+    try {
+      // endpoint público: sem token. Base já inclui /crmuni
+      await postJson("/Empresa/Cadastro", form); // `form` já tem o formato { empresa, usuario }
+      navigate("/login");
+    } catch (err) {
+      setErro(err.message);
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (
@@ -100,7 +114,12 @@ const RegistraEmpresa = () => {
             Voltar
           </Button>
         )}
-        <Button className="registro-botao" type="submit" variant="contained">
+        {erro && (
+          <p className="registro-erro" role="alert">
+            {erro}
+          </p>
+        )}
+        <Button className="registro-botao" type="submit" variant="contained" disabled={enviando}>
           {ultima ? "Criar conta" : "Próximo"}
         </Button>
 
