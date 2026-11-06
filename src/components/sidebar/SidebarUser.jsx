@@ -13,7 +13,7 @@ const SidebarUser = ({ nome, cargo, collapsed, "onLogout" }) => (
     {!collapsed && (
       <>
         <div className="sb-user-info">
-          <strong>{nome}</strong>""""
+          <strong>{nome}</strong>
           <small>{cargo} · Online</small>
         </div>
         <IconButton size="small" onClick={onLogout} aria-label="Sair" className="sb-toggle">
