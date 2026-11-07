@@ -18,7 +18,7 @@ const INICIAL = [
   { id: 4, nome: "Juliana Alves", email: "juliana@movimento.com.br", setor: "Suporte", status: "offline", atendimentos: 0 },
 ];
 
-const VAZIO = { nome: "", email: "", setor: SETORES[0] };
+const VAZIO = { nome: "", email: "", setor: SETORES[0], senha: "", confirmacao: "" };
 
 const Funcionarios = () => {
   const [lista, setLista] = useState(INICIAL);
@@ -33,9 +33,14 @@ const Funcionarios = () => {
 
   const set = (campo) => (e) => setForm({ ...form, [campo]: e.target.value });
 
+  const divergente = form.confirmacao !== "" && form.senha !== form.confirmacao;
+
   const salvar = (e) => {
     e.preventDefault();
-    setLista([...lista, { ...form, id: Date.now(), status: "offline", atendimentos: 0 }]);
+    if (form.senha !== form.confirmacao) return;
+    // shortcut: senha não é guardada na lista local; enviar à API quando existir
+    const { senha, confirmacao, ...dados } = form;
+    setLista([...lista, { ...dados, id: Date.now(), status: "offline", atendimentos: 0 }]);
     setForm(VAZIO);
     setAberto(false);
   };
@@ -79,6 +84,15 @@ const Funcionarios = () => {
                   <option key={s}>{s}</option>
                 ))}
               </select>
+            </label>
+            <label>
+              Senha
+              <input required type="password" minLength={6} autoComplete="new-password" value={form.senha} onChange={set("senha")} />
+            </label>
+            <label>
+              Confirmar senha
+              <input required type="password" autoComplete="new-password" value={form.confirmacao} onChange={set("confirmacao")} />
+              {divergente && <small className="func-erro">As senhas não conferem.</small>}
             </label>
           </div>
           <button className="func-btn func-save" type="submit">
