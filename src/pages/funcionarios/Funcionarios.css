@@ -1,0 +1,34 @@
+.func { display: flex; flex-direction: column; gap: 14px; }
+.func-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.func-head h1 { margin: 0; font-size: 22px; }
+.func-head p { margin: 4px 0 0; font-size: 13px; color: #64748b; }
+.func-btn { display: inline-flex; align-items: center; gap: 6px; background: #2563eb; color: #fff; border: 0;
+  border-radius: 10px; padding: 7px 14px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.func-btn:hover { background: #1d4ed8; }
+.func-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; }
+.func-form { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.func-form-title { display: flex; align-items: center; gap: 8px; }
+.func-form-title .func-icon { margin-left: auto; }
+.func-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.func-fields label { display: flex; flex-direction: column; gap: 5px; font-weight: 600; font-size: 13px; }
+.func-fields input, .func-fields select { height: 36px; border: 1px solid #e2e8f0; border-radius: 8px;
+  padding: 0 14px; font: inherit; font-weight: 400; }
+.func-save { align-self: flex-end; }
+.func-search { display: flex; align-items: center; gap: 8px; width: min(100%, 360px); height: 38px; padding: 0 14px;
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; color: #94a3b8; }
+.func-search input { flex: 1; border: 0; outline: 0; font: inherit; background: transparent; }
+.func-table { overflow-x: auto; }
+.func-row { display: grid; grid-template-columns: 3fr 1.6fr 1.4fr 1.6fr 1.6fr 60px; align-items: center; min-width: 720px;
+  padding: 9px 16px; border-top: 1px solid #f1f5f9; }
+.func-th { border-top: 0; color: #64748b; font-size: 12px; font-weight: 600; }
+.func-nome { display: flex; flex-direction: column; }
+.func-nome small { color: #94a3b8; }
+.func-badge { font-style: normal; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+.func-badge.online { background: #dcfce7; color: #15803d; }
+.func-badge.ocupado { background: #fef3c7; color: #a16207; }
+.func-badge.offline { background: #f1f5f9; color: #64748b; }
+.func-mono { font-family: monospace; font-weight: 700; }
+.func-mono.cheio { color: #dc2626; }
+.func-icon { background: none; border: 0; color: #64748b; cursor: pointer; display: inline-flex; }
+.func-icon:disabled { cursor: default; opacity: .6; }
+.func-vazio { padding: 24px; text-align: center; color: #94a3b8; border-top: 1px solid #f1f5f9; }

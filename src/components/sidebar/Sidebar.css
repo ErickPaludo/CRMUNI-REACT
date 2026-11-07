@@ -34,4 +34,4 @@
 .sb-nav::-webkit-scrollbar-thumb { background: #243750; border-radius: 3px; }
 .sb-nav::-webkit-scrollbar-thumb:hover { background: #33496b; }
 .sb-layout { display: flex; }
-.sb-content { flex: 1; padding: 24px; min-width: 0; }
+.sb-content { flex: 1; padding: 24px; min-width: 0; background: #f0f4f9; min-height: 100vh; }
