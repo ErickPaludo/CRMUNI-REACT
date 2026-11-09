@@ -31,6 +31,7 @@ export const menuSections = [
       { label: "Funcionários", to: "/funcionarios", icon: ManageAccountsOutlined },
       { label: "Administradores", to: "/administradores", icon: ShieldOutlined },
       { label: "Setores", to: "/setores", icon: LayersOutlined },
+      { label: "Planos", to: "/planos", icon: ShoppingBagOutlined },
     ],
   },
 ];

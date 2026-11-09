@@ -4,7 +4,8 @@ import Login from "./pages/login/Login";
 import RegistraEmpresa from "./pages/registrar/empresa/RegistraEmpresa";
 import Empresa from "./pages/empresa/Empresa";
 import Funcionarios from "./pages/funcionarios/Funcionarios";
-import Mensagem from "./pages/mensagem/Mensagem";
+import Planos from "./pages/planos/Planos";
+import Mensagem from"./pages/mensagem/Mensagem";
 import Navbar from "./components/Navbar";
 import SidebarLayout from "./components/sidebar/SidebarLayout";
 import NotFound from "./pages/NotFound";
@@ -22,6 +23,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="empresa" element={<Empresa />} />
             <Route path="funcionarios" element={<Funcionarios />} />
+            <Route path="planos" element={<Planos />} />
           </Route>
           <Route
             path="/:guidEmpresa/mensagem/:telefone"

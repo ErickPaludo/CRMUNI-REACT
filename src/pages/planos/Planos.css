@@ -1,0 +1,5 @@
+.planos-row { grid-template-columns: 2fr 1.4fr 4fr 1.2fr 60px; min-width: 640px; }
+.planos-desc { grid-template-columns: minmax(200px, 420px); }
+.planos-desc textarea { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; font: inherit;
+  font-weight: 400; resize: vertical; }
+.planos-ativo { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 13px; }
