@@ -7,7 +7,8 @@ import Funcionarios from "./pages/funcionarios/Funcionarios";
 import Planos from "./pages/planos/Planos";
 import Setores from "./pages/setores/Setores";
 import Funil from "./pages/funil/Funil";
-import Mensagem from"./pages/mensagem/Mensagem";
+import Etapas from "./pages/etapas/Etapas";
+import Mensagem from "./pages/mensagem/Mensagem";
 import Navbar from "./components/Navbar";
 import SidebarLayout from "./components/sidebar/SidebarLayout";
 import NotFound from "./pages/NotFound";
@@ -27,7 +28,8 @@ function App() {
             <Route path="funcionarios" element={<Funcionarios />} />
             <Route path="planos" element={<Planos />} />
             <Route path="setores" element={<Setores />} />
-            <Route path="funil" element={<Funil />} />
+            <Route path="funis" element={<Funil />} />
+            <Route path="etapas" element={<Etapas />} />
           </Route>
           <Route
             path="/:guidEmpresa/mensagem/:telefone"
