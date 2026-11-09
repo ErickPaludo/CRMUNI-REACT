@@ -8,6 +8,8 @@ import Planos from "./pages/planos/Planos";
 import Setores from "./pages/setores/Setores";
 import Funil from "./pages/funil/Funil";
 import Etapas from "./pages/etapas/Etapas";
+import Mensagens from "./pages/mensagens/Mensagens";
+import Atendimentos from "./pages/atendimentos/Atendimentos";
 import Mensagem from "./pages/mensagem/Mensagem";
 import Navbar from "./components/Navbar";
 import SidebarLayout from "./components/sidebar/SidebarLayout";
@@ -30,6 +32,8 @@ function App() {
             <Route path="setores" element={<Setores />} />
             <Route path="funis" element={<Funil />} />
             <Route path="etapas" element={<Etapas />} />
+            <Route path="mensagens/:id?" element={<Mensagens />} />
+            <Route path="atendimentos" element={<Atendimentos />} />
           </Route>
           <Route
             path="/:guidEmpresa/mensagem/:telefone"

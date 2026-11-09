@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
-import IconButton from "@mui/material/IconButton";
-import SendIcon from "@mui/icons-material/Send";
 import { formatarTelefone } from "../../utils/formatadores";
+import ChatHeader from "../../components/chat/ChatHeader";
+import ChatMessageList from "../../components/chat/ChatMessageList";
+import ChatComposer from "../../components/chat/ChatComposer";
 import "./Mensagem.css";
 
 const hoje = () =>
@@ -12,66 +13,21 @@ const Mensagem = () => {
   // shortcut: guidEmpresa ainda não é usado; entrará na conexão do websocket
   const { telefone, guidEmpresa } = useParams();
   const [mensagens, setMensagens] = useState([]);
-  const [texto, setTexto] = useState("");
-  const fim = useRef(null);
 
-  useEffect(() => {
-    fim.current?.scrollIntoView({ behavior: "smooth" });
-  }, [mensagens]);
-
-  // TODO: websocket — chamar receber({ autor: "crmuni", texto }) ao chegar mensagem
+  // TODO: websocket — chamar receber({ meu: false, remetente: "CRMUNI", iniciais: "CR", cor: "crmuni", texto }) ao chegar mensagem
   const receber = (msg) =>
     setMensagens((m) => [...m, { id: crypto.randomUUID(), hora: hoje(), ...msg }]);
 
-  const enviar = (e) => {
-    e.preventDefault();
-    const t = texto.trim();
-    if (!t) return;
-    receber({ autor: "cliente", texto: t });
-    // TODO: websocket — enviar `t` pelo socket
-    setTexto("");
+  const enviar = (texto) => {
+    receber({ meu: true, iniciais: "VC", cor: "cliente", texto });
+    // TODO: websocket — enviar `texto` pelo socket
   };
 
   return (
     <div className="chat-pagina">
-      <header className="chat-header">
-        <div className="chat-avatar chat-avatar-crmuni">CR</div>
-        <div>
-          <div className="chat-nome">CRMUNI</div>
-          <div className="chat-telefone">{formatarTelefone(telefone)}</div>
-        </div>
-      </header>
-
-      <div className="chat-lista">
-        {mensagens.map((m) => {
-          const meu = m.autor === "cliente";
-          return (
-            <div key={m.id} className={`chat-linha ${meu ? "meu" : ""}`}>
-              <div className={`chat-avatar ${meu ? "chat-avatar-cliente" : "chat-avatar-crmuni"}`}>
-                {meu ? "VC" : "CR"}
-              </div>
-              <div className="chat-coluna">
-                {!meu && <span className="chat-remetente">CRMUNI</span>}
-                <div className="chat-balao">{m.texto}</div>
-                <span className="chat-hora">{m.hora}</span>
-              </div>
-            </div>
-          );
-        })}
-        <div ref={fim} />
-      </div>
-
-      <form className="chat-envio" onSubmit={enviar}>
-        <input
-          className="chat-input"
-          placeholder="Digite uma mensagem..."
-          value={texto}
-          onChange={(e) => setTexto(e.target.value)}
-        />
-        <IconButton type="submit" className="chat-enviar" aria-label="Enviar" disabled={!texto.trim()}>
-          <SendIcon />
-        </IconButton>
-      </form>
+      <ChatHeader iniciais="CR" nome="CRMUNI" telefone={formatarTelefone(telefone)} />
+      <ChatMessageList mensagens={mensagens} />
+      <ChatComposer onEnviar={enviar} />
     </div>
   );
 };

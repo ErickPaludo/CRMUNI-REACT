@@ -1,5 +1,6 @@
 import DashboardOutlined from "@mui/icons-material/DashboardOutlined";
 import ChatBubbleOutlined from "@mui/icons-material/ChatBubbleOutlined";
+import SupportAgentOutlined from "@mui/icons-material/SupportAgentOutlined";
 import PeopleOutlined from "@mui/icons-material/PeopleOutlined";
 import FilterAltOutlined from "@mui/icons-material/FilterAltOutlined";
 import ViewKanbanOutlined from "@mui/icons-material/ViewKanbanOutlined";
@@ -18,7 +19,8 @@ export const menuSections = [
   {
     items: [
       { label: "Dashboard", to: "/", icon: DashboardOutlined },
-      { label: "Atendimento", to: "/atendimento", icon: ChatBubbleOutlined },
+      { label: "Mensagens", to: "/mensagens", icon: ChatBubbleOutlined },
+      { label: "Atendimentos", to: "/atendimentos", icon: SupportAgentOutlined },
       { label: "Clientes", to: "/clientes", icon: PeopleOutlined },
       { label: "Funil de Vendas", to: "/funis", icon: FilterAltOutlined },
       { label: "Etapas", to: "/etapas", icon: ViewKanbanOutlined },
