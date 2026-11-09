@@ -1,0 +1,27 @@
+.funil { display: flex; flex-direction: column; height: 100%; }
+.funil-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.funil-head h1 { margin: 0; font-size: 22px; }
+.funil-head p { margin: 4px 0 0; color: #6b7280; font-size: 14px; }
+.funil-filtros { display: flex; gap: 6px; flex-wrap: wrap; }
+.funil-filtros button { border: 0; background: #f1f5f9; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; }
+.funil-filtros button.ativo { background: #111827; color: #fff; }
+
+.funil-board { display: flex; gap: 14px; overflow-x: auto; flex: 1; padding-bottom: 8px; }
+.funil-col { flex: 0 0 240px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.funil-col h2 { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 13px; }
+.funil-col h2 i { width: 8px; height: 8px; border-radius: 50%; }
+.funil-col h2 b { margin-left: auto; color: #fff; font-size: 11px; min-width: 20px; height: 20px; border-radius: 10px; display: grid; place-items: center; }
+.funil-col > small { color: #6b7280; font-family: monospace; font-size: 11px; }
+.funil-vazio { text-align: center; color: #cbd5e1; font-size: 12px; margin-top: 20px; }
+
+.funil-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+.funil-card-top { display: flex; gap: 8px; align-items: center; }
+.funil-card-top strong { display: block; font-size: 13px; }
+.funil-card-top span:not(.funil-avatar) { font-size: 11px; color: #9ca3af; }
+.funil-avatar { width: 28px; height: 28px; border-radius: 50%; background: #2563eb; color: #fff; font-size: 10px; font-weight: 700; display: grid; place-items: center; }
+.funil-valor { margin: 0; color: #16a34a; font-family: monospace; font-weight: 700; font-size: 14px; }
+.funil-card small { color: #6b7280; font-size: 10px; }
+.funil-ia { align-self: flex-start; font-style: normal; font-size: 10px; padding: 2px 8px; border-radius: 6px; }
+.funil-ia.ok { background: #dcfce7; color: #15803d; }
+.funil-ia.info { background: #dbeafe; color: #1d4ed8; }
+.funil-ia.alerta { background: #ffedd5; color: #c2410c; }

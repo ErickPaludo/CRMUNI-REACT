@@ -6,6 +6,7 @@ import Empresa from "./pages/empresa/Empresa";
 import Funcionarios from "./pages/funcionarios/Funcionarios";
 import Planos from "./pages/planos/Planos";
 import Setores from "./pages/setores/Setores";
+import Funil from "./pages/funil/Funil";
 import Mensagem from"./pages/mensagem/Mensagem";
 import Navbar from "./components/Navbar";
 import SidebarLayout from "./components/sidebar/SidebarLayout";
@@ -26,6 +27,7 @@ function App() {
             <Route path="funcionarios" element={<Funcionarios />} />
             <Route path="planos" element={<Planos />} />
             <Route path="setores" element={<Setores />} />
+            <Route path="funil" element={<Funil />} />
           </Route>
           <Route
             path="/:guidEmpresa/mensagem/:telefone"
