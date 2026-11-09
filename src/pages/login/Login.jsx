@@ -1,13 +1,26 @@
-import React from "react";
-import TextField from "@mui/material/TextField";
-import CampoTexto from "src/components/CampoTexto";
+import React, {useState} from "react";
+import Button from "@mui/material/Button";
+import CampoTexto from "../../components/CampoTexto";
 import "./Login.css";
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [manterConectado, setManterConectado] = useState(false);
+
+  const enviar = (e) => {
+    e.preventDefault();
+
+    console.log({
+      email,
+      senha, 
+      manterConectado,
+    });
+  };
   
   return (
     <div className="login">
       <div className="login__left">
-      <form className="login__card">
+      <form className="login__card" onSubmit={enviar}>
         <h1>Bem-vindo de volta 👋</h1>
         <p className="login__subtitle">
           Entre com sua conta para acessar o painel.
@@ -17,18 +30,52 @@ const Login = () => {
           label="E-mail"
           type="email"
           placeholder="voce@empresa.com.br"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
         />
 
-        <CampoTexto label="Senha" type="password" />
+        <CampoTexto label="Senha"
+         type="password"
+         value={senha}
+         onChange={(e) => setSenha(e.target.value)}
+         required
+          />
 
         <div className="login__row">
           <label className="login__check">
-            <input type="checkbox" /> Manter conectado
+            <input
+             type="checkbox"
+             checked={manterConectado}
+             onChange={(e) =>
+              setManterConectado(e.target.checked)
+             }
+              />
+               Manter conectado
           </label>
           <a href="#">Esqueci minha senha</a>
         </div>
 
-        <button type="submit">Entrar</button>
+      <Button 
+        type="submit"
+        variant="contained"
+        fullWidth
+        sx={{
+          height: "46px",
+          borderRadius: "6px",
+          fontFamily: "Outfit, sans-serif",
+          fontWeight: 700,
+          fontSize: "15px",
+          backgroundColor: "#2563eb",
+          boxShadow: "none",
+          "&:hover": {
+          backgroundColor: "1d4ed8",
+          boxShadow: "none",
+        },
+      }}
+    >
+          Entrar
+          </Button>
       </form>
     </div>
 

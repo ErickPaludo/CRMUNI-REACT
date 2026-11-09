@@ -1,6 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700&display=swap");
+
 .login {
     display: flex;
     min-height: 100vh;
+    font-family: "Inter", sans-serif;
 }
 
 .login__left {
@@ -9,7 +12,8 @@
     align-items: center;
     justify-content: center;
     padding: 40px;
-    background: #eff3f8;
+    box-sizing: border-box;
+    background: #f0f4f9;
 }
 
 .login__card {
@@ -18,7 +22,8 @@
 }
 
 .login__card h1 {
-    margin: 0 0 8px;
+    margin: 0 0 12px;
+    font-family: "Outfit", sans-serif;
     font-size: 28px;
     font-weight: 700;
     color: #0f172a;
@@ -27,6 +32,7 @@
 
 .login__subtitle{
     margin: 0 0 28px;
+    font-size: 15px;
     color: #64748b;
     text-align: center;
 }
@@ -35,8 +41,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 14px;
-    margin: 4px 0 20px;
+    gap: 10px;
+    font-size: 13px;
+    margin: 8px 0 24px;
 }
 
 .login__check{
@@ -46,30 +53,39 @@
     color: #374151;
 }
 
+.login__check input {
+    accent-color: #2563eb;
+}
+
 .login__row a {
     color: #2563eb;
     text-decoration: none;
 }
 
-.login__row:hover{
+.login__row a:hover{
     text-decoration: underline;
 }
 
-.login__card button[type="submit"] {
+.login__botao.MuiButton-root {
     width: 100%;
-    padding: 14px;
+    height: 46px;
+    font-family: "Outfit", sans-serif;
     font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    box-shadow: none;
     text-transform: uppercase;
     color: #fff;
     background: #2563eb;
-    brder: none;
     border-radius: 6px;
+    border: none;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2;
 }
 
-.login__card button[type="submit"]:hover{
+.login__botao.MuiButton-root:hover{
     background: #1d4ed8;
+    box-shadow: none;
 }
 
 .login__right {
@@ -78,12 +94,19 @@
     flex-direction: column;
     justify-content: center;
     padding: 60px;
+    box-sizing: border-box;
     color: #fff;
-    background: linear-gradient(135deg, #2563eb 0%, #1e40af 60%, #1e3a8a 100%);
+    background: linear-gradient(
+        135deg, 
+        #2563eb 0%, 
+        #1e40af 60%, 
+        #1e3a8a 100%
+    );
 }
 
 .login__right h2{
     margin-right: 0 0 16px;
+    font-family: "Outfit", sans-serif;
     font-size: 36px;
     line-height: 1.2;
 }
@@ -91,7 +114,7 @@
 .login__right p{
     max-width: 460px;
     margin: 0 0 28px;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 1.6;
     opacity: 0.92;
 }
@@ -104,7 +127,8 @@
 
 .login__right li{
     margin-bottom: 12px;
-    font-size: 16px;
+    font-size: 15px;
+    line-height: 1.5;
 }
 
 .login__right li::before{
@@ -116,5 +140,9 @@
 @media (max-width: 800px){
     .login__right{
         display: none;
+    }
+
+    .login__left{
+        padding: 32px 20px;
     }
 }
