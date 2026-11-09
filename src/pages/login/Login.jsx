@@ -1,6 +1,6 @@
 import React from "react";
 import TextField from "@mui/material/TextField";
-import CampoTexto from "./CampoTexto";
+import CampoTexto from "src/components/CampoTexto";
 import "./Login.css";
 const Login = () => {
   
