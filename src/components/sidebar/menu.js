@@ -1,7 +1,8 @@
 import DashboardOutlined from "@mui/icons-material/DashboardOutlined";
 import ChatBubbleOutlined from "@mui/icons-material/ChatBubbleOutlined";
 import PeopleOutlined from "@mui/icons-material/PeopleOutlined";
-import TrendingUp from "@mui/icons-material/TrendingUp";
+import FilterAltOutlined from "@mui/icons-material/FilterAltOutlined";
+import ViewKanbanOutlined from "@mui/icons-material/ViewKanbanOutlined";
 import ShoppingBagOutlined from "@mui/icons-material/ShoppingBagOutlined";
 import CalendarTodayOutlined from "@mui/icons-material/CalendarTodayOutlined";
 import PsychologyOutlined from "@mui/icons-material/PsychologyOutlined";
@@ -19,8 +20,8 @@ export const menuSections = [
       { label: "Dashboard", to: "/", icon: DashboardOutlined },
       { label: "Atendimento", to: "/atendimento", icon: ChatBubbleOutlined },
       { label: "Clientes", to: "/clientes", icon: PeopleOutlined },
-      { label: "Funil de Vendas", to: "/funis", icon: TrendingUp },
-      { label: "Etapas", to: "/etapas", icon: TrendingUp },
+      { label: "Funil de Vendas", to: "/funis", icon: FilterAltOutlined },
+      { label: "Etapas", to: "/etapas", icon: ViewKanbanOutlined },
       { label: "Pedidos / Matrículas", to: "/pedidos", icon: ShoppingBagOutlined },
       { label: "Relatórios", to: "/relatorios", icon: BarChart },
     ],

@@ -1,5 +1,7 @@
 import { useState } from "react";
-import "./Funil.css";
+import Board from "../../components/board/Board";
+import BoardColumn from "../../components/board/BoardColumn";
+import BoardCard from "../../components/board/BoardCard";
 
 // shortcut: dados fixos em memória, trocar por useApi (GET negociações) quando a API existir.
 const ETAPAS = [
@@ -24,79 +26,46 @@ const NEGOCIACOES = [
 const RESPONSAVEIS = ["Lucas", "Ana", "Pedro", "Fernanda"];
 const moeda = (v) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-const iniciais = (n) =>
-  n
-    .split(" ")
-    .map((p) => p[0])
-    .slice(0, 2)
-    .join("");
+const soma = (l) => l.reduce((s, n) => s + n.valor, 0);
 
 const Funil = () => {
   const [filtro, setFiltro] = useState("Todos");
   const lista = NEGOCIACOES.filter(
     (n) => filtro === "Todos" || n.resp === filtro,
   );
-  const total = lista.reduce((s, n) => s + n.valor, 0);
 
   return (
-    <div className="funil">
-      <header className="funil-head">
-        <div>
-          <h1>Funil de Vendas</h1>
-          <p>
-            {lista.length} negociações · {moeda(total)}/mês em potencial
-          </p>
-        </div>
-        <div className="funil-filtros">
-          {["Todos", ...RESPONSAVEIS].map((r) => (
-            <button
-              key={r}
-              className={r === filtro ? "ativo" : ""}
-              onClick={() => setFiltro(r)}
-            >
-              {r}
-            </button>
-          ))}
-        </div>
-      </header>
-
-      <div className="funil-board">
-        {ETAPAS.map((e) => {
-          const cards = lista.filter((n) => n.etapa === e.id);
-          const soma = cards.reduce((s, n) => s + n.valor, 0);
-          return (
-            <section className="funil-col" key={e.id}>
-              <h2>
-                <i style={{ background: e.cor }} /> {e.nome}
-                <b style={{ background: e.cor }}>{cards.length}</b>
-              </h2>
-              <small>{moeda(soma)}/mês</small>
-              {cards.length === 0 && (
-                <p className="funil-vazio">Sem negociações</p>
-              )}
-              {cards.map((n) => (
-                <article className="funil-card" key={n.id}>
-                  <div className="funil-card-top">
-                    <span className="funil-avatar">{iniciais(n.nome)}</span>
-                    <div>
-                      <strong>{n.nome}</strong>
-                      <span>{n.plano}</span>
-                    </div>
-                  </div>
-                  <p className="funil-valor">{moeda(n.valor)}/mês</p>
-                  <small>
-                    {n.resp} · {n.origem} · {n.tempo}
-                  </small>
-                  {n.ia && (
-                    <em className={`funil-ia ${n.ia[1]}`}>IA: {n.ia[0]}</em>
-                  )}
-                </article>
-              ))}
-            </section>
-          );
-        })}
-      </div>
-    </div>
+    <Board
+      titulo="Funil de Vendas"
+      subtitulo={`${lista.length} negociações · ${moeda(soma(lista))}/mês em potencial`}
+      filtros={["Todos", ...RESPONSAVEIS]}
+      filtro={filtro}
+      onFiltro={setFiltro}
+    >
+      {ETAPAS.map((e) => {
+        const cards = lista.filter((n) => n.etapa === e.id);
+        return (
+          <BoardColumn
+            key={e.id}
+            nome={e.nome}
+            cor={e.cor}
+            quantidade={cards.length}
+            total={`${moeda(soma(cards))}/mês`}
+            vazio="Sem negociações"
+          >
+            {cards.map((n) => (
+              <BoardCard key={n.id} titulo={n.nome} subtitulo={n.plano}>
+                <p className="funil-valor">{moeda(n.valor)}/mês</p>
+                <small>
+                  {n.resp} · {n.origem} · {n.tempo}
+                </small>
+                {n.ia && <em className={`funil-ia ${n.ia[1]}`}>IA: {n.ia[0]}</em>}
+              </BoardCard>
+            ))}
+          </BoardColumn>
+        );
+      })}
+    </Board>
   );
 };
 

@@ -1,5 +1,6 @@
-import { useState } from "react";
-import "../funil/Funil.css";
+import Board from "../../components/board/Board";
+import BoardColumn from "../../components/board/BoardColumn";
+import BoardCard from "../../components/board/BoardCard";
 
 const FUNIS = [
   { id: "inicial", nome: "Inicial", cor: "#2563eb" },
@@ -13,51 +14,21 @@ const FUNIS = [
 
 const ETAPAS = [];
 
-const Etapas = () => {
-  const [filtro, setFiltro] = useState("Todas");
-  const lista = ETAPAS.filter(
-    (e) => filtro === "Todas" || (filtro === "Ativas") === e.ativa,
-  );
-
-  return (
-    <div className="funil">
-      <header className="funil-head">
-        <div>
-          <h1>Etapas</h1>
-          <p>
-            {lista.length} etapas em {FUNIS.length} funis
-          </p>
-        </div>
-      </header>
-
-      <div className="funil-board">
-        {FUNIS.map((f) => {
-          const cards = lista.filter((e) => e.funil === f.id);
-          return (
-            <section className="funil-col" key={f.id}>
-              <h2>
-                <i style={{ background: f.cor }} /> {f.nome}
-                <b style={{ background: f.cor }}>{cards.length}</b>
-              </h2>
-              {cards.length === 0 && <p className="funil-vazio">Sem etapas</p>}
-              {cards.map((e) => (
-                <article className="funil-card" key={e.id}>
-                  <div className="funil-card-top">
-                    <span className="funil-avatar">{e.id}</span>
-                    <div>
-                      <strong>{e.nome}</strong>
-                      <span>{e.descricao}</span>
-                    </div>
-                  </div>
-                  <small>{e.ativa ? "Ativa" : "Inativa"}</small>
-                </article>
-              ))}
-            </section>
-          );
-        })}
-      </div>
-    </div>
-  );
-};
+const Etapas = () => (
+  <Board titulo="Etapas" subtitulo={`${ETAPAS.length} etapas em ${FUNIS.length} funis`}>
+    {FUNIS.map((f) => {
+      const cards = ETAPAS.filter((e) => e.funil === f.id);
+      return (
+        <BoardColumn key={f.id} nome={f.nome} cor={f.cor} quantidade={cards.length} vazio="Sem etapas">
+          {cards.map((e) => (
+            <BoardCard key={e.id} avatar={e.id} titulo={e.nome} subtitulo={e.descricao}>
+              <small>{e.ativa ? "Ativa" : "Inativa"}</small>
+            </BoardCard>
+          ))}
+        </BoardColumn>
+      );
+    })}
+  </Board>
+);
 
 export default Etapas;

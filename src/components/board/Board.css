@@ -1,4 +1,5 @@
-.funil { display: flex; flex-direction: column; height: 100%; }
+/* altura = viewport - padding do .sb-content (48px): a barra horizontal fica sempre visível no rodapé da tela */
+.funil { display: flex; flex-direction: column; height: calc(100vh - 48px); }
 .funil-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
 .funil-head h1 { margin: 0; font-size: 22px; }
 .funil-head p { margin: 4px 0 0; color: #6b7280; font-size: 14px; }
@@ -6,8 +7,14 @@
 .funil-filtros button { border: 0; background: #f1f5f9; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; }
 .funil-filtros button.ativo { background: #111827; color: #fff; }
 
-.funil-board { display: flex; gap: 14px; overflow-x: auto; flex: 1; padding-bottom: 8px; }
-.funil-col { flex: 0 0 240px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.funil-board { display: flex; gap: 14px; overflow-x: auto; flex: 1; min-height: 0; padding-bottom: 8px; cursor: grab; }
+.funil-board { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+.funil-board::-webkit-scrollbar { height: 10px; }
+.funil-board::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 999px; }
+.funil-board::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 999px; }
+.funil-board::-webkit-scrollbar-thumb:hover { background: #64748b; }
+.funil-board.arrastando { cursor: grabbing; user-select: none; }
+.funil-col { flex: 0 0 240px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
 .funil-col h2 { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 13px; }
 .funil-col h2 i { width: 8px; height: 8px; border-radius: 50%; }
 .funil-col h2 b { margin-left: auto; color: #fff; font-size: 11px; min-width: 20px; height: 20px; border-radius: 10px; display: grid; place-items: center; }
