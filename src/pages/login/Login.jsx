@@ -37,14 +37,16 @@ const Login = () => {
     </div>
 
     <div className="login__right">
-      <h2>Tudo o que você precisa em um só lugar</h2>
+      <h2>Todos os seus atendimentos em um só lugar</h2>
       <p>
-        Gerencie seus projetos, acompanhe resultados e acesse suas informações de forma simples, rápida e segura.
-      </p>
+        Centralize as conversas entre clientes e funcionários em uma única
+        plataforma, com chatbot para a triagem inicial e acompanhamento
+        completo das suas vendas.
+       </p>
       <ul>
-        <li>Painel completo e fácil de usar</li>
-        <li>Seus dados sempre protegidos</li>
-        <li>Acesso de qualquer dispositivo</li>
+        <li>Triagem automática por setor: Comercial, Financeiro e Suporte</li>
+        <li>Histórico e ficha completa de cada cliente</li>
+        <li>Dashboards com vendas e tempo de espera</li>
       </ul>
     </div>
   </div>
