@@ -1,5 +1,6 @@
 import React from "react";
 import TextField from "@mui/material/TextField";
+import CampoTexto from "./CampoTexto";
 import "./Login.css";
 const Login = () => {
   
@@ -8,25 +9,20 @@ const Login = () => {
       <div className="login__left">
       <form className="login__card">
         <h1>Bem-vindo de volta 👋</h1>
-        <p>Entre com sua conta para acessar o painel.</p>
+        <p className="login__subtitle">
+          Entre com sua conta para acessar o painel.
+        </p>
 
-        <TextField
+        <CampoTexto
           label="E-mail"
           type="email"
           placeholder="voce@empresa.com.br"
-          fullWidth
-          margin="normal"
         />
 
-        <TextField
-          label="Senha"
-          type="password"
-          fullWidth
-          margin="normal"
-        />
+        <CampoTexto label="Senha" type="password" />
 
         <div className="login__row">
-          <label>
+          <label className="login__check">
             <input type="checkbox" /> Manter conectado
           </label>
           <a href="#">Esqueci minha senha</a>
