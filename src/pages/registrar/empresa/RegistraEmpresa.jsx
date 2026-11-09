@@ -114,6 +114,10 @@ const RegistraEmpresa = () => {
           {ultima ? "Criar conta" : "Próximo"}
         </Button>
 
+        <Button className="registro-voltar" sx={{ mt: 1.5 }} onClick={() => navigate("/login")}>
+          Voltar para o login
+        </Button>
+
         <p className="registro-rodape">
           Ao criar a conta, você concorda com os Termos de Uso e a Política de
           Privacidade do CRMUNI.

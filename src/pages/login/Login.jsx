@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
 import CampoTexto from "../../components/CampoTexto";
 import "./Login.css";
@@ -75,6 +76,9 @@ const Login = () => {
           >
             Entrar
           </Button>
+          <p className="login__registrar">
+            Não tem uma conta? <Link to="/registrar">Registre-se</Link>
+          </p>
         </form>
       </div>
 
