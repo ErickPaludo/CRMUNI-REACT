@@ -5,6 +5,7 @@ import RegistraEmpresa from "./pages/registrar/empresa/RegistraEmpresa";
 import Empresa from "./pages/empresa/Empresa";
 import Funcionarios from "./pages/funcionarios/Funcionarios";
 import Planos from "./pages/planos/Planos";
+import Setores from "./pages/setores/Setores";
 import Mensagem from"./pages/mensagem/Mensagem";
 import Navbar from "./components/Navbar";
 import SidebarLayout from "./components/sidebar/SidebarLayout";
@@ -19,11 +20,12 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/registrar" element={<RegistraEmpresa />} />
-          <Route path="/:guidEmpresa" element={<SidebarLayout />}>
+          <Route path="/" element={<SidebarLayout />}>
             <Route index element={<Home />} />
             <Route path="empresa" element={<Empresa />} />
             <Route path="funcionarios" element={<Funcionarios />} />
             <Route path="planos" element={<Planos />} />
+            <Route path="setores" element={<Setores />} />
           </Route>
           <Route
             path="/:guidEmpresa/mensagem/:telefone"
