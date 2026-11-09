@@ -1,0 +1,10 @@
+/* tela cheia: remove o padding do .sb-content e ocupa toda a altura/largura ao lado da sidebar */
+.sb-content:has(.msgs) { padding: 0; }
+.msgs { display: flex; width: 100%; height: 100vh; height: 100dvh; background: #f8fafc; overflow: hidden; }
+.msgs-chat { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+.msgs-cliente { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.msgs-cliente .chat-avatar { width: 36px; height: 36px; }
+.msgs-cliente strong { display: block; font-size: 14px; }
+.msgs-cliente small { color: #16a34a; }
+.pn-caixa p { margin: 6px 0 0; }
+.msgs-aviso { flex: 1; display: flex; padding: 24px; }

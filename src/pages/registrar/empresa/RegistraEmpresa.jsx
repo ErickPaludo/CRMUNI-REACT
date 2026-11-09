@@ -3,6 +3,7 @@ import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import CampoTexto from "../../../components/CampoTexto";
 import { postJson } from "../../../hooks/http";
+import { mascaraCnpj } from "../../../utils/formatadores";
 import "./RegistraEmpresa.css";
 
 const etapas = {
@@ -35,16 +36,6 @@ const vazio = Object.fromEntries(
     Object.fromEntries(etapas[g].campos.map(([nome]) => [nome, ""])),
   ]),
 );
-
-// 00.000.000/0000-00: só dígitos, no máximo 14
-const mascaraCnpj = (v) =>
-  v
-    .replace(/\D/g, "")
-    .slice(0, 14)
-    .replace(/^(\d{2})(\d)/, "$1.$2")
-    .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
-    .replace(/\.(\d{3})(\d)/, ".$1/$2")
-    .replace(/(\d{4})(\d)/, "$1-$2");
 
 const RegistraEmpresa = () => {
   const [form, setForm] = useState(vazio);

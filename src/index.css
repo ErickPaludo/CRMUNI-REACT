@@ -4,4 +4,12 @@ body {
   margin: 0;
   padding: 0;
   background-color: #ffff;
+  font-family: "Outfit", sans-serif;
+}
+
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
 }
