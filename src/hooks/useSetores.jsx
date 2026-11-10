@@ -9,6 +9,7 @@ export function SetoresProvider({ children }) {
   const { isAuthenticated } = useAuth();
   const api = useApi();
   const [setores, setSetores] = useState([]);
+  const [carregando, setCarregando] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -16,16 +17,18 @@ export function SetoresProvider({ children }) {
       return;
     }
     let ativo = true;
+    setCarregando(true);
     api
       .get("/setor")
       .then((r) => ativo && setSetores(r.setores ?? []))
-      .catch(() => ativo && setSetores([]));
+      .catch(() => ativo && setSetores([]))
+      .finally(() => ativo && setCarregando(false));
     return () => {
       ativo = false;
     };
   }, [isAuthenticated, api]);
 
-  const value = useMemo(() => ({ setores }), [setores]);
+  const value = useMemo(() => ({ setores, carregando }), [setores, carregando]);
   return <SetoresContext.Provider value={value}>{children}</SetoresContext.Provider>;
 }
 

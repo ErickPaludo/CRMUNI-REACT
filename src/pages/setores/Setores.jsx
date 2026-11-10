@@ -1,16 +1,16 @@
 import LayersOutlined from "@mui/icons-material/LayersOutlined";
 import PeopleOutline from "@mui/icons-material/PeopleOutlineOutlined";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useSetores } from "../../hooks/useSetores";
 import "../funcionarios/Funcionarios.css";
 import "./Setores.css";
 
-// shortcut: setores fixos em memória, trocar por useApi (GET setores da empresa) quando a API existir.
-const SETORES = [
-  { id: 1, nome: "Comercial", descricao: "Novos leads, planos e conversões", funcionarios: 5, cor: "azul" },
-  { id: 2, nome: "Financeiro", descricao: "Pagamentos, cobranças e matrículas", funcionarios: 3, cor: "verde" },
-  { id: 3, nome: "Suporte", descricao: "Dúvidas e atendimento aos alunos", funcionarios: 4, cor: "roxo" },
-];
+// setores vêm do SetoresProvider (GET /setor, carregado ao autenticar); a cor segue o tipo do setor.
+const CORES = ["azul", "verde", "roxo"];
 
-const Setores = () => (
+const Setores = () => {
+  const { setores, carregando } = useSetores();
+  return (
   <div className="func">
     <header className="func-head">
       <div>
@@ -20,9 +20,11 @@ const Setores = () => (
     </header>
 
     <div className="setores-grid">
-      {SETORES.map((s) => (
+      {carregando && <CircularProgress size={28} aria-label="Carregando setores" />}
+      {!carregando && !setores.length && <p className="setores-sub">Nenhum setor encontrado.</p>}
+      {setores.map((s) => (
         <div className="func-card setor-card" key={s.id}>
-          <span className={`setor-icon ${s.cor}`}>
+          <span className={`setor-icon ${CORES[s.tipo] ?? "azul"}`}>
             <LayersOutlined fontSize="small" />
           </span>
           <h2>
@@ -30,12 +32,13 @@ const Setores = () => (
           </h2>
           <p>{s.descricao}</p>
           <footer>
-            <PeopleOutline fontSize="small" /> {s.funcionarios} funcionários
+            <PeopleOutline fontSize="small" /> {s.quantidadeFuncionarios} funcionários
           </footer>
         </div>
       ))}
     </div>
   </div>
-);
+  );
+};
 
 export default Setores;
