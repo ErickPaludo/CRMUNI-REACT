@@ -1,4 +1,5 @@
-import { useState } from "react";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useFunis } from "../../hooks/useFunis";
 import Board from "../../components/board/Board";
 import BoardColumn from "../../components/board/BoardColumn";
 import BoardCard from "../../components/board/BoardCard";
@@ -23,34 +24,33 @@ const NEGOCIACOES = [
   },
 ];
 
-const RESPONSAVEIS = ["Lucas", "Ana", "Pedro", "Fernanda"];
 const moeda = (v) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-const soma = (l) => l.reduce((s, n) => s + n.valor, 0);
 
 const Funil = () => {
-  const [filtro, setFiltro] = useState("Todos");
-  const lista = NEGOCIACOES.filter(
-    (n) => filtro === "Todos" || n.resp === filtro,
-  );
+  const { funis, carregando } = useFunis();
+  const funil = funis[0]; // shortcut: usa o primeiro funil; seletor de funil quando for preciso
+  // shortcut: assume funil.etapas [{id, nome, cor}]; sem elas cai nas etapas fixas
+  const etapas = funil?.etapas?.length ? funil.etapas : ETAPAS;
+
+  if (carregando) {
+    return (
+      <div style={{ display: "grid", placeItems: "center", padding: 48 }}>
+        <CircularProgress aria-label="Carregando funis" />
+      </div>
+    );
+  }
 
   return (
-    <Board
-      titulo="Funil de Vendas"
-      subtitulo={`${lista.length} negociações · ${moeda(soma(lista))}/mês em potencial`}
-      filtros={["Todos", ...RESPONSAVEIS]}
-      filtro={filtro}
-      onFiltro={setFiltro}
-    >
-      {ETAPAS.map((e) => {
-        const cards = lista.filter((n) => n.etapa === e.id);
+    <Board titulo={funil?.nome ?? "Funil de Vendas"}>
+      {etapas.map((e) => {
+        const cards = NEGOCIACOES.filter((n) => n.etapa === e.id);
         return (
           <BoardColumn
             key={e.id}
             nome={e.nome}
             cor={e.cor}
             quantidade={cards.length}
-            total={`${moeda(soma(cards))}/mês`}
             vazio="Sem negociações"
           >
             {cards.map((n) => (
@@ -59,7 +59,9 @@ const Funil = () => {
                 <small>
                   {n.resp} · {n.origem} · {n.tempo}
                 </small>
-                {n.ia && <em className={`funil-ia ${n.ia[1]}`}>IA: {n.ia[0]}</em>}
+                {n.ia && (
+                  <em className={`funil-ia ${n.ia[1]}`}>IA: {n.ia[0]}</em>
+                )}
               </BoardCard>
             ))}
           </BoardColumn>

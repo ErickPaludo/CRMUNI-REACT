@@ -5,13 +5,19 @@ import App from './App.jsx'
 import { AuthProvider } from './hooks/useAuth.jsx'
 import { UsuarioProvider } from './hooks/useUsuario.jsx'
 import { SetoresProvider } from './hooks/useSetores.jsx'
+import { FunisProvider } from './hooks/useFunis.jsx'
+import { EtapasProvider } from './hooks/useEtapas.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
       <UsuarioProvider>
         <SetoresProvider>
-          <App />
+          <FunisProvider>
+            <EtapasProvider>
+              <App />
+            </EtapasProvider>
+          </FunisProvider>
         </SetoresProvider>
       </UsuarioProvider>
     </AuthProvider>
