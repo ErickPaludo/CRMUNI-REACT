@@ -19,7 +19,7 @@ const SidebarUser = ({ nome, cargo, collapsed, onLogout }) => (
       <>
         <div className="sb-user-info">
           <strong>{nome}</strong>
-          <small>{cargo} · Online</small>
+          <small>{cargo ? `${cargo} · ` : ""}Online</small>
         </div>
         <IconButton
           size="small"

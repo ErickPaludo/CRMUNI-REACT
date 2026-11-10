@@ -33,3 +33,13 @@
 .func-icon:disabled { cursor: default; opacity: .6; }
 .func-vazio { padding: 24px; text-align: center; color: #94a3b8; border-top: 1px solid #f1f5f9; }
 .func-erro { color: #dc2626; font-weight: 400; }
+.func-filtros { display: flex; flex-wrap: wrap; gap: 10px; }
+.func-filtro-setor { height: 38px; padding: 0 12px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; font: inherit; color: #0f172a; outline: 0; cursor: pointer; }
+.func-filtro-setor:focus { border-color: #2563eb; }
+.func-atualizar { align-self: center; margin-top: 4px; }
+.func-atualizar:disabled { opacity: .7; cursor: default; }
+.func-senha { position: relative; display: flex; }
+.func-senha input { flex: 1; min-width: 0; padding-right: 40px; }
+.func-senha button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: grid; place-items: center;
+  width: 28px; height: 28px; border: 0; background: transparent; color: #94a3b8; cursor: pointer; border-radius: 6px; }
+.func-senha button:hover { color: #475569; }

@@ -1,3 +1,5 @@
+import { rastrear } from "./carregamento";
+
 export const API_URL = import.meta.env.VITE_API_URL ?? "https://crmuniapi.pldprojects.com.br/crmuni";
 
 // Padrão de erro da API: { title, status, instance }
@@ -17,13 +19,16 @@ export async function parseError(res) {
   return new ApiError(body.status ?? res.status, msg, body.instance);
 }
 
-export async function postJson(path, body) {
-  const res = await fetch(`${API_URL}${path}`, {
-    method: "POST",
-    credentials: "include", // cookie HttpOnly do refresh token
-    headers: { "Content-Type": "application/json" },
-    body: body && JSON.stringify(body),
-  });
-  if (!res.ok) throw await parseError(res);
-  return res.status === 204 ? null : res.json();
-}
+export const postJson = (path, body) =>
+  rastrear(
+    (async () => {
+      const res = await fetch(`${API_URL}${path}`, {
+        method: "POST",
+        credentials: "include", // cookie HttpOnly do refresh token
+        headers: { "Content-Type": "application/json" },
+        body: body && JSON.stringify(body),
+      });
+      if (!res.ok) throw await parseError(res);
+      return res.status === 204 ? null : res.json();
+    })(),
+  );

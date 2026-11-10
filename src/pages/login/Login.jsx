@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 import Button from "@mui/material/Button";
 import CampoTexto from "../../components/CampoTexto";
 import "./Login.css";
@@ -8,14 +9,25 @@ const Login = () => {
   const [senha, setSenha] = useState("");
   const [manterConectado, setManterConectado] = useState(false);
 
-  const enviar = (e) => {
-    e.preventDefault();
+  const { login, isAuthenticated, carregando } = useAuth();
+  const navigate = useNavigate();
+  const [erro, setErro] = useState("");
+  const [enviando, setEnviando] = useState(false);
 
-    console.log({
-      email,
-      senha,
-      manterConectado,
-    });
+  if (!carregando && isAuthenticated) return <Navigate to="/" replace />;
+
+  const enviar = async (e) => {
+    e.preventDefault();
+    setErro("");
+    setEnviando(true);
+    try {
+      await login({ email, senha });
+      navigate("/");
+    } catch (err) {
+      setErro(err.message);
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (
@@ -56,8 +68,14 @@ const Login = () => {
             <a href="#">Esqueci minha senha</a>
           </div>
 
+          {erro && (
+            <p className="login__erro" role="alert">
+              {erro}
+            </p>
+          )}
           <Button
             type="submit"
+            disabled={enviando}
             variant="contained"
             fullWidth
             sx={{
