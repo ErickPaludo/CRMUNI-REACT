@@ -1,6 +1,7 @@
 import { rastrear } from "./carregamento";
 
 export const API_URL = import.meta.env.VITE_API_URL ?? "https://crmuniapi.pldprojects.com.br/crmuni";
+//export const API_URL = import.meta.env.VITE_API_URL ?? "https://localhost:7028/crmuni";
 
 // Padrão de erro da API: { title, status, instance }
 export class ApiError extends Error {

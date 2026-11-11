@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import "./Board.css";
 
 // Cabeçalho (título, subtítulo, filtros) + quadro de colunas que rola arrastando com o mouse.
-const Board = ({ titulo, subtitulo, filtros = [], filtro, onFiltro, children }) => {
+const Board = ({ titulo, subtitulo, filtros, children }) => {
   const ref = useRef(null);
   const drag = useRef(null);
   const [arrastando, setArrastando] = useState(false);
@@ -27,15 +27,7 @@ const Board = ({ titulo, subtitulo, filtros = [], filtro, onFiltro, children }) 
           <h1>{titulo}</h1>
           <p>{subtitulo}</p>
         </div>
-        {filtros.length > 0 && (
-          <div className="funil-filtros">
-            {filtros.map((f) => (
-              <button key={f} className={f === filtro ? "ativo" : ""} onClick={() => onFiltro(f)}>
-                {f}
-              </button>
-            ))}
-          </div>
-        )}
+        {filtros && <div className="funil-filtros">{filtros}</div>}
       </header>
 
       <div

@@ -41,7 +41,7 @@ function App() {
           </Route>
           </Route>
           <Route
-            path="/:guidEmpresa/mensagem/:telefone"
+            path="/:guidEmpresa/mensagem/:telefone?"
             element={<Mensagem />}
           />
           <Route path="*" element={<NotFound />} />

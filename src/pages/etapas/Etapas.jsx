@@ -1,24 +1,21 @@
+import { useEffect } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import Board from "../../components/board/Board";
 import BoardColumn from "../../components/board/BoardColumn";
 import BoardCard from "../../components/board/BoardCard";
+import { useFiltroAtendimentos } from "../../components/board/useFiltroAtendimentos";
 import { useEtapas } from "../../hooks/useEtapas";
+import { useAtendimentos } from "../../hooks/useAtendimentos";
 
-// uma coluna por `tipo` de etapa (o tipo 6 não existe na API; Perdido é 7)
-const COLUNAS = [
-  { tipo: 0, nome: "Inicial", cor: "#2563eb" },
-  { tipo: 1, nome: "Primeiro Contato", cor: "#059669" },
-  { tipo: 2, nome: "Apresentação de Planos", cor: "#d5d83d" },
-  { tipo: 3, nome: "Aguardando decisão", cor: "#949997" },
-  { tipo: 4, nome: "Conversão", cor: "#1f85c0" },
-  { tipo: 5, nome: "Concluído", cor: "#189114" },
-  { tipo: 7, nome: "Perdido", cor: "#df0808" },
-];
+const CORES = ["#2563eb", "#059669", "#d5d83d", "#949997", "#1f85c0", "#189114", "#7c3aed", "#df0808"]; // por `tipo` da etapa
 
 const Etapas = () => {
-  const { etapas, carregando } = useEtapas();
+  const { etapas, carregando: carregandoEtapas } = useEtapas();
+  const { atendimentos: todos, carregando: carregandoAtend, recarregar } = useAtendimentos();
+  useEffect(recarregar, [recarregar]); // busca de novo ao entrar na tela
+  const { filtrados: atendimentos, filtros } = useFiltroAtendimentos(todos);
 
-  if (carregando) {
+  if (carregandoEtapas || carregandoAtend) {
     return (
       <div style={{ display: "grid", placeItems: "center", padding: 48 }}>
         <CircularProgress aria-label="Carregando etapas" />
@@ -26,24 +23,23 @@ const Etapas = () => {
     );
   }
 
-  const funis = new Set(etapas.map((e) => e.funil?.id)).size;
+  // agrupa as etapas de todos os funis por tipo: uma coluna por etapa, com os atendimentos de qualquer funil
+  const grupos = [...Map.groupBy(etapas, (e) => e.tipo)].sort((x, y) => x[0] - y[0]);
   return (
-    <Board
-      titulo="Etapas"
-      subtitulo={`${new Set(etapas.map((e) => e.tipo)).size} etapas em ${funis} funis`}
-    >
-      {COLUNAS.map((c) => {
-        const cards = etapas
-          .filter((e) => e.tipo === c.tipo)
-          .sort((a, b) => a.funil.id - b.funil.id);
+    <Board titulo="Etapas" subtitulo={`${grupos.length} etapas · ${atendimentos.length} atendimentos`} filtros={filtros}>
+      {grupos.map(([tipo, lista]) => {
+        const ids = new Set(lista.map((e) => e.id));
+        const atends = atendimentos.filter((a) => ids.has(a.etapa?.id));
         return (
-          <BoardColumn
-            key={c.tipo}
-            nome={c.nome}
-            cor={c.cor}
-            quantidade={cards.length}
-            vazio="Sem etapas"
-          ></BoardColumn>
+          <BoardColumn key={tipo} nome={lista[0].nome} cor={CORES[tipo] ?? CORES[0]} quantidade={atends.length} vazio="Sem atendimentos">
+            {atends.map((a) => (
+              <BoardCard key={a.id} titulo={`Atendimento #${a.id}`} subtitulo={a.funil?.nome}>
+                <small>
+                  {a.atendente?.setor} · {a.atendente?.nomeCompleto} · {new Date(a.dataCriacao).toLocaleDateString("pt-BR")}
+                </small>
+              </BoardCard>
+            ))}
+          </BoardColumn>
         );
       })}
     </Board>

@@ -6,6 +6,7 @@
 .funil-filtros { display: flex; gap: 6px; flex-wrap: wrap; }
 .funil-filtros button { border: 0; background: #f1f5f9; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; }
 .funil-filtros button.ativo { background: #111827; color: #fff; }
+.funil-filtros select { border: 1px solid #e2e8f0; background: #fff; border-radius: 6px; padding: 6px 10px; font: inherit; font-size: 12px; cursor: pointer; }
 
 .funil-board { display: flex; gap: 14px; overflow-x: auto; flex: 1; min-height: 0; padding-bottom: 8px; cursor: grab; }
 .funil-board { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }

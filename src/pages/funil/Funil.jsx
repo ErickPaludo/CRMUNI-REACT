@@ -1,67 +1,40 @@
+import { useEffect } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useFunis } from "../../hooks/useFunis";
+import { useAtendimentos } from "../../hooks/useAtendimentos";
 import Board from "../../components/board/Board";
 import BoardColumn from "../../components/board/BoardColumn";
 import BoardCard from "../../components/board/BoardCard";
+import { useFiltroAtendimentos } from "../../components/board/useFiltroAtendimentos";
 
-// shortcut: dados fixos em memória, trocar por useApi (GET negociações) quando a API existir.
-const ETAPAS = [
-  { id: "curioso", nome: "Curioso", cor: "#6b7280" },
-  { id: "potencialCliente", nome: "Potencial Cliente", cor: "#7c3aed" },
-  { id: "vendido", nome: "Vendido", cor: "#2563eb" },
-];
-
-const NEGOCIACOES = [
-  {
-    id: 1,
-    etapa: "inicial",
-    nome: "Camila Oliveira",
-    plano: "Plano Básico",
-    valor: 99.9,
-    resp: "Lucas",
-    origem: "YouTube",
-    tempo: "45min",
-  },
-];
-
-const moeda = (v) =>
-  v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const CORES = ["#6b7280", "#7c3aed", "#2563eb"]; // por `tipo` do funil
 
 const Funil = () => {
-  const { funis, carregando } = useFunis();
-  const funil = funis[0]; // shortcut: usa o primeiro funil; seletor de funil quando for preciso
-  // shortcut: assume funil.etapas [{id, nome, cor}]; sem elas cai nas etapas fixas
-  const etapas = funil?.etapas?.length ? funil.etapas : ETAPAS;
+  const { funis, carregando: carregandoFunis } = useFunis();
+  const { atendimentos: todos, carregando: carregandoAtend, recarregar } = useAtendimentos();
+  useEffect(recarregar, [recarregar]); // busca de novo ao entrar na tela
+  const { filtrados: atendimentos, filtros } = useFiltroAtendimentos(todos);
 
-  if (carregando) {
+  if (carregandoFunis || carregandoAtend) {
     return (
       <div style={{ display: "grid", placeItems: "center", padding: 48 }}>
-        <CircularProgress aria-label="Carregando funis" />
+        <CircularProgress aria-label="Carregando funil" />
       </div>
     );
   }
 
+  // uma coluna por funil; cada atendimento é um cartão no funil em que está
   return (
-    <Board titulo={funil?.nome ?? "Funil de Vendas"}>
-      {etapas.map((e) => {
-        const cards = NEGOCIACOES.filter((n) => n.etapa === e.id);
+    <Board titulo="Funil de Vendas" subtitulo={`${atendimentos.length} atendimentos`} filtros={filtros}>
+      {funis.map((f) => {
+        const cards = atendimentos.filter((a) => a.funil?.id === f.id);
         return (
-          <BoardColumn
-            key={e.id}
-            nome={e.nome}
-            cor={e.cor}
-            quantidade={cards.length}
-            vazio="Sem negociações"
-          >
-            {cards.map((n) => (
-              <BoardCard key={n.id} titulo={n.nome} subtitulo={n.plano}>
-                <p className="funil-valor">{moeda(n.valor)}/mês</p>
+          <BoardColumn key={f.id} nome={f.nome} cor={CORES[f.tipo] ?? CORES[0]} quantidade={cards.length} vazio="Sem atendimentos">
+            {cards.map((a) => (
+              <BoardCard key={a.id} titulo={`Atendimento #${a.id}`} subtitulo={a.etapa?.nome}>
                 <small>
-                  {n.resp} · {n.origem} · {n.tempo}
+                  {a.atendente?.setor} · {a.atendente?.nomeCompleto} · {new Date(a.dataCriacao).toLocaleDateString("pt-BR")}
                 </small>
-                {n.ia && (
-                  <em className={`funil-ia ${n.ia[1]}`}>IA: {n.ia[0]}</em>
-                )}
               </BoardCard>
             ))}
           </BoardColumn>

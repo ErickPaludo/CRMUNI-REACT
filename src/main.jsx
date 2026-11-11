@@ -7,6 +7,7 @@ import { UsuarioProvider } from './hooks/useUsuario.jsx'
 import { SetoresProvider } from './hooks/useSetores.jsx'
 import { FunisProvider } from './hooks/useFunis.jsx'
 import { EtapasProvider } from './hooks/useEtapas.jsx'
+import { AtendimentosProvider } from './hooks/useAtendimentos.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -15,7 +16,9 @@ createRoot(document.getElementById('root')).render(
         <SetoresProvider>
           <FunisProvider>
             <EtapasProvider>
-              <App />
+              <AtendimentosProvider>
+                <App />
+              </AtendimentosProvider>
             </EtapasProvider>
           </FunisProvider>
         </SetoresProvider>

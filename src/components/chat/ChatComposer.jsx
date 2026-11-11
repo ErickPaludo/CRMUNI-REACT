@@ -7,7 +7,8 @@ import MicNone from "@mui/icons-material/MicNone";
 import "./Chat.css";
 
 // abas/aba/onAba e extras são opcionais: a tela do cliente usa só o campo + enviar.
-const ChatComposer = ({ onEnviar, abas, aba, onAba, extras = false }) => {
+// bloqueado: texto do motivo; desativa o campo (ex.: atendimento encerrado).
+const ChatComposer = ({ onEnviar, abas, aba, onAba, extras = false, bloqueado }) => {
   const [texto, setTexto] = useState("");
 
   const enviar = (e) => {
@@ -33,7 +34,8 @@ const ChatComposer = ({ onEnviar, abas, aba, onAba, extras = false }) => {
         <div className="chat-campo">
           <input
             className="chat-input"
-            placeholder="Digite uma mensagem..."
+            placeholder={bloqueado || "Digite uma mensagem..."}
+            disabled={!!bloqueado}
             value={texto}
             onChange={(e) => setTexto(e.target.value)}
           />
@@ -45,7 +47,7 @@ const ChatComposer = ({ onEnviar, abas, aba, onAba, extras = false }) => {
             </span>
           )}
         </div>
-        <IconButton type="submit" className="chat-enviar" aria-label="Enviar" disabled={!texto.trim()}>
+        <IconButton type="submit" className="chat-enviar" aria-label="Enviar" disabled={!!bloqueado || !texto.trim()}>
           <SendIcon />
         </IconButton>
       </form>

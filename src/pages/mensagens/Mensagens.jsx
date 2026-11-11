@@ -1,9 +1,23 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import { useAuth } from "../../hooks/useAuth";
+import { useAtendimentos } from "../../hooks/useAtendimentos";
+import { useFunis } from "../../hooks/useFunis";
+import { useEtapas } from "../../hooks/useEtapas";
+import { CHAT_URL, hora, iniciais, mensagemErro } from "../../hooks/chat";
+import { formatarTelefone } from "../../utils/formatadores";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
 import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
 import EditOutlined from "@mui/icons-material/EditOutlined";
 import PsychologyOutlined from "@mui/icons-material/PsychologyOutlined";
 import Aviso from "../../components/Aviso";
+import CircularProgress from "@mui/material/CircularProgress";
+import { rastrear } from "../../hooks/carregamento";
 import ChatHeader from "../../components/chat/ChatHeader";
 import ChatMessageList from "../../components/chat/ChatMessageList";
 import ChatComposer from "../../components/chat/ChatComposer";
@@ -12,70 +26,218 @@ import ChatAvatar from "../../components/chat/ChatAvatar";
 import { InfoPanel, InfoSection, InfoRow, InfoBox, InfoSelect, Tag, TagGroup } from "../../components/chat/InfoPanel";
 import "./Mensagens.css";
 
-// shortcut: tudo em memória (conversas, mensagens, ficha da IA); trocar por useApi + websocket quando existirem.
-const CONVERSAS = [
-  { id: 1, iniciais: "GM", nome: "Gabriel Martins", hora: "14:50", previa: "Gostaria de saber os valores dos ...", naoLidas: 2, responsavel: "Lucas Oliveira", setor: "Comercial", espera: "18min", telefone: "(47) 99999-1234", origem: "Instagram", etapa: "Apresentação de Planos" },
-  { id: 2, iniciais: "MS", nome: "Mariana Souza", hora: "14:43", previa: "Vocês possuem natação para adolesc...", naoLidas: 0, responsavel: "Ana Souza", setor: "Comercial", espera: "7min", telefone: "(47) 98888-4321", origem: "Google", etapa: "Aguardando decisão" },
-  { id: 3, iniciais: "PA", nome: "Pedro Almeida", hora: "14:47", previa: "Preciso cancelar minha matrícula", naoLidas: 1, responsavel: "Pedro Henrique", setor: "Suporte", espera: "3min", telefone: "(47) 97777-1111", origem: "Facebook", etapa: "Inicial" },
-  { id: 4, iniciais: "JC", nome: "Juliana Costa", hora: "11:20", previa: "Vamos fechar! Como faço a matrícula?", naoLidas: 0, responsavel: "Lucas Oliveira", setor: "Comercial", espera: "0min", telefone: "(47) 96666-2222", origem: "LinkedIn", etapa: "Concluído" },
-];
+// Classificação do cliente = tipo do funil da etapa atual (EFunil da API)
+const CLASSIFICACAO = { 0: "Curioso", 1: "Potencial Cliente", 2: "Vendido" };
+const porOrdem = (a, b) => a.ordem - b.ordem;
 
-const cli = (id, texto, hora) => ({ id, texto, hora, remetente: "Gabriel Martins", iniciais: "G", cor: "cliente" });
-const eu = (id, texto, hora) => ({ id, texto, hora, meu: true, iniciais: "LO", cor: "crmuni", lido: true });
-const MENSAGENS = [
-  cli(1, "Olá, gostaria de saber os valores dos planos disponíveis.", "14:32"),
-  { id: 2, texto: "Olá! Claro! Posso te ajudar com os planos disponíveis. 😊", hora: "14:32", remetente: "IA CRMUNI", iniciais: "AI", cor: "ia", ia: true },
-  cli(3, "Quero um plano para treinar musculação e gostaria de saber se vocês possuem natação.", "14:35"),
-  eu(4, "Olá Gabriel! Temos algumas opções que podem se encaixar no que você procura. Nosso Plano Premium (R$ 149,90/mês) dá acesso a musculação + natação + todas as modalidades. Posso te apresentar os detalhes?", "14:38"),
-  cli(5, "Sim! Quero saber mais sobre o Premium. Quais horários a natação está disponível?", "14:40"),
-];
+// AtendimentoDto do hub -> formato do ConversationList
+const daConversa = (a) => ({
+  id: a.idAtendimento,
+  iniciais: iniciais(a.nomeCliente),
+  nome: a.nomeCliente,
+  telefone: formatarTelefone(a.telefoneCliente),
+  previa: a.clienteConectado ? "● Cliente online" : "Cliente offline",
+  naoLidas: 0,
+  responsavel: a.nomeFuncionario,
+  numero: `nº ${a.idAtendimento}`,
+  setor: a.setor,
+  espera: a.clienteConectado ? "agora" : "-",
+  conectado: a.clienteConectado,
+});
 
-// shortcut: opções fixas, trocar pelas listas reais de funis/etapas da API.
-const FUNIS = ["Funil de Vendas"];
-const ETAPAS = ["Inicial", "Primeiro Contato", "Apresentação de Planos", "Aguardando decisão", "Conversão", "Concluído", "Perdido"];
+// MensagemDto -> formato do ChatMessageList; tipo 1 = ERemetente.Funcionario.
+// Administrador (leitura) vê o nome de quem enviou nos dois lados.
+const daMensagem = (m, leitura) => ({
+  id: m.id,
+  texto: m.texto,
+  hora: hora(m.dataHora),
+  meu: m.tipo === 1,
+  remetente: m.tipo === 1 && !leitura ? undefined : m.remetente,
+  iniciais: iniciais(m.remetente),
+  cor: m.tipo === 1 ? "crmuni" : "cliente",
+});
 
 const Mensagens = () => {
-  const [funil, setFunil] = useState(FUNIS[0]);
+  const { funcionario, tokenRef } = useAuth();
+  // funcionario === false: Usuário administrador acompanha todas as conversas da empresa, sem enviar.
+  // null: login/refresh ainda não respondeu.
+  return funcionario == null ? null : <ChatAtendente tokenRef={tokenRef} leitura={!funcionario} />;
+};
+
+const ChatAtendente = ({ tokenRef, leitura }) => {
+  const { atendimentos: detalhes, recarregar } = useAtendimentos();
+  const { funis } = useFunis();
+  const { etapas: todasEtapas } = useEtapas();
   const { id } = useParams(); // /mensagens/:id abre direto a conversa (vem da tabela de atendimentos)
   const navigate = useNavigate();
-  const conversa = CONVERSAS.find((c) => String(c.id) === id) ?? CONVERSAS[0];
-  const ativaId = conversa.id;
-  const [etapas, setEtapas] = useState({});
+  const [atendimentos, setAtendimentos] = useState([]);
+  const conversas = atendimentos.map(daConversa);
+  const [erro, setErro] = useState(null);
+  const [carregado, setCarregado] = useState(false);
+  // Com :id na rota não cai em outra conversa: atendimento finalizado não está na lista e não aceita mensagens.
+  const conversa = id ? conversas.find((c) => String(c.id) === id) : conversas[0];
+  const ativaId = conversa?.id;
   const [aba, setAba] = useState("Mensagem");
-  const [porConversa, setPorConversa] = useState({ 1: MENSAGENS });
+  const [porConversa, setPorConversa] = useState({});
   const mensagens = porConversa[ativaId] ?? [];
-  const etapa = etapas[ativaId] ?? conversa.etapa;
+  const hub = useRef(null);
 
-  const enviar = (texto) =>
-    setPorConversa((p) => ({
-      ...p,
-      [ativaId]: [
-        ...(p[ativaId] ?? []),
-        eu(crypto.randomUUID(), texto, new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })),
-      ],
-    }));
+  // Etapa salva (a gravada nesta tela tem prioridade até o GET /atendimento recarregar)
+  // e rascunho (escolhido nos selects, só grava ao confirmar "Aplicar alteração").
+  const [etapaSalva, setEtapaSalva] = useState({});
+  const [rascunho, setRascunho] = useState({});
+  const idSalvo = etapaSalva[ativaId] ?? detalhes.find((d) => d.id === ativaId)?.etapa?.id;
+  const idEtapa = rascunho[ativaId] ?? idSalvo;
+  const etapaDe = (idE) => todasEtapas.find((e) => e.id === idE);
+  const funilAtual = etapaDe(idEtapa)?.funil;
+  const etapasDoFunil = todasEtapas.filter((e) => e.funil.id === funilAtual?.id).sort(porOrdem);
+  const classificacao = CLASSIFICACAO[etapaDe(idSalvo)?.funil?.tipo];
+  const alterado = idEtapa != null && idEtapa !== idSalvo;
+  const [confirmar, setConfirmar] = useState(null); // { titulo, texto, acao }
+  // Tira o foco do botão antes de abrir o diálogo: o MUI põe aria-hidden no #root e o navegador
+  // bloqueia (e avisa) se o elemento focado ficar escondido.
+  const pedirConfirmacao = (e, c) => {
+    e.currentTarget.blur();
+    setConfirmar(c);
+  };
+
+  const escolherEtapa = (idNova) => setRascunho((r) => ({ ...r, [ativaId]: idNova }));
+
+  // Trocar o funil sugere a primeira etapa (menor ordem) do funil escolhido.
+  const escolherFunil = (idFunil) => {
+    const primeira = todasEtapas.filter((e) => e.funil.id === idFunil).sort(porOrdem)[0];
+    if (!primeira) return setErro("O funil escolhido não possui etapas.");
+    escolherEtapa(primeira.id);
+  };
+
+  // O funil acompanha a etapa: gravar a etapa move o atendimento para o funil dela.
+  const aplicar = () =>
+    rastrear(hub.current.invoke("AlterarEtapa", ativaId, idEtapa))
+      .then(() => {
+        setEtapaSalva((e) => ({ ...e, [ativaId]: idEtapa }));
+        setRascunho((r) => ({ ...r, [ativaId]: undefined }));
+        recarregar();
+      })
+      .catch((e) => setErro(mensagemErro(e)));
+
+  // Funcionário: EncerrarAtendimento finaliza no banco (definitivo), com o cliente online ou não.
+  const finalizar = () =>
+    rastrear(hub.current.invoke("EncerrarAtendimento", ativaId).then(() => hub.current.invoke("ListarAtendimentos")))
+      .then((l) => {
+        setAtendimentos(l);
+        recarregar();
+        navigate("/mensagens");
+      })
+      .catch((e) => setErro(mensagemErro(e)));
+
+  const adicionar = (idAtendimento, ...msgs) =>
+    setPorConversa((p) => ({ ...p, [idAtendimento]: [...(p[idAtendimento] ?? []), ...msgs] }));
+
+  // Conecta como atendente (JWT na query string) e mantém a lista de atendimentos atualizada pelos eventos.
+  useEffect(() => {
+    const conexao = new HubConnectionBuilder()
+      .withUrl(CHAT_URL, { accessTokenFactory: () => tokenRef.current })
+      .withAutomaticReconnect()
+      .configureLogging(LogLevel.Warning)
+      .build();
+    hub.current = conexao;
+
+    const listar = () =>
+      rastrear(conexao.invoke("ListarAtendimentos"))
+        .then((l) => {
+          if (hub.current !== conexao) return;
+          setAtendimentos(l);
+          setCarregado(true);
+        })
+        .catch((e) => hub.current === conexao && setErro(mensagemErro(e)));
+
+    conexao.on("ReceberMensagem", (m) => adicionar(m.idAtendimento, daMensagem(m, leitura)));
+    conexao.on("AtendimentoIniciado", listar);
+    conexao.on("AtendimentoEncerrado", listar);
+    conexao.onreconnected(listar);
+
+    const iniciando = conexao.start();
+    rastrear(iniciando)
+      .then(() => hub.current === conexao && listar())
+      .catch((e) => hub.current === conexao && setErro(mensagemErro(e)));
+
+    return () => {
+      // StrictMode monta o efeito 2x em dev: a conexão descartada não pode mexer no estado,
+      // e só fecha depois de negociar (parar no meio gera o erro "stopped during negotiation").
+      if (hub.current === conexao) hub.current = null;
+      iniciando.catch(() => {}).finally(() => conexao.stop());
+    };
+  }, [tokenRef, leitura]);
+
+  // Histórico da conversa aberta (recarrega ao trocar de conversa).
+  useEffect(() => {
+    if (ativaId == null || hub.current?.state !== "Connected") return;
+    rastrear(hub.current.invoke("RetornarMensagens", ativaId))
+      .then((l) => setPorConversa((p) => ({ ...p, [ativaId]: l.map((m) => daMensagem(m, leitura)) })))
+      .catch((e) => {
+        setPorConversa((p) => ({ ...p, [ativaId]: p[ativaId] ?? [] })); // para o carregamento; o erro aparece no aviso
+        setErro(mensagemErro(e));
+      });
+  }, [ativaId, leitura]);
+
+  const enviar = (texto) => {
+    // shortcut: anotações internas ficam só em memória; gravar quando a API tiver o endpoint.
+    if (aba !== "Mensagem")
+      return adicionar(ativaId, { id: crypto.randomUUID(), texto, hora: hora(), meu: true, iniciais: "AN", cor: "ia", remetente: "Anotação interna" });
+    hub.current?.invoke("EnviarMensagem", ativaId, texto).catch((e) => setErro(mensagemErro(e)));
+  };
+
+  if (!conversa)
+    return (
+      <div className="msgs">
+        {conversas.length > 0 && (
+          <ConversationList conversas={conversas} onSelecionar={(i) => navigate(`/mensagens/${i}`)} />
+        )}
+        <div className="msgs-aviso">
+          {erro ? (
+            <Aviso titulo="Chat indisponível">{erro}</Aviso>
+          ) : !carregado ? (
+            <CircularProgress aria-label="Carregando conversas" sx={{ m: "auto" }} />
+          ) : id ? (
+            <Aviso titulo="Atendimento encerrado">
+              O atendimento nº {id} foi finalizado ou não está mais disponível. Não é possível enviar mensagens.
+            </Aviso>
+          ) : (
+            <Aviso tipo="info" titulo="Nenhuma conversa">Você não possui atendimentos em andamento.</Aviso>
+          )}
+        </div>
+      </div>
+    );
 
   return (
     <div className="msgs">
-      <ConversationList conversas={CONVERSAS} ativaId={ativaId} onSelecionar={(i) => navigate(`/mensagens/${i}`)} />
+      <ConversationList conversas={conversas} ativaId={ativaId} onSelecionar={(i) => navigate(`/mensagens/${i}`)} />
 
       <section className="msgs-chat">
         <ChatHeader
           iniciais={conversa.iniciais}
           nome={conversa.nome}
-          badge="Potencial Cliente"
+          badge={classificacao}
           telefone={conversa.telefone}
+          detalhe={conversa.conectado ? "online" : "offline"}
         />
-        {mensagens.length === 0 ? (
-          <div className="msgs-aviso">
-            <Aviso titulo="Atendimento fora do prazo">
-              Não foi possível carregar as mensagens, pois este atendimento está fora do prazo.
-            </Aviso>
+        {erro && (
+          <div style={{ padding: "12px 24px 0" }}>
+            <Aviso titulo="Erro no chat">{erro}</Aviso>
           </div>
-        ) : (
-          <ChatMessageList mensagens={mensagens} />
         )}
-        <ChatComposer abas={["Mensagem", "Anotações internas"]} aba={aba} onAba={setAba} onEnviar={enviar} extras />
+        {porConversa[ativaId] ? (
+          <ChatMessageList mensagens={mensagens} />
+        ) : (
+          <div className="msgs-aviso">
+            <CircularProgress aria-label="Carregando mensagens" sx={{ m: "auto" }} />
+          </div>
+        )}
+        {leitura ? (
+          <ChatComposer onEnviar={enviar} bloqueado="Modo acompanhamento: administradores não enviam mensagens." />
+        ) : (
+          <ChatComposer abas={["Mensagem", "Anotações internas"]} aba={aba} onAba={setAba} onEnviar={enviar} extras />
+        )}
       </section>
 
       <InfoPanel>
@@ -84,18 +246,59 @@ const Mensagens = () => {
             <ChatAvatar iniciais={conversa.iniciais} />
             <div>
               <strong>{conversa.nome}</strong>
-              <small>● WhatsApp conectado</small>
+              <small>{conversa.conectado ? "● Online no chat" : "Offline"}</small>
             </div>
           </div>
           <InfoRow rotulo="Telefone" valor={conversa.telefone} />
-          <InfoRow rotulo="Origem" valor={conversa.origem} />
-          <InfoRow rotulo="Responsável" valor={conversa.responsavel} />
+          <InfoRow rotulo="Atendimento" valor={conversa.numero} />
           <InfoRow rotulo="Setor" valor={conversa.setor} />
+          <InfoRow rotulo="Responsável" valor={conversa.responsavel} />
           <InfoBox destaque>
-            <InfoRow rotulo="Classificação" valor="Potencial Cliente" />
-            <InfoSelect rotulo="Funil" valor={funil} opcoes={FUNIS} onChange={setFunil} />
-            <InfoSelect rotulo="Etapa" valor={etapa} opcoes={ETAPAS} onChange={(v) => setEtapas((e) => ({ ...e, [ativaId]: v }))} />
+            <InfoRow rotulo="Classificação" valor={classificacao ?? "-"} />
+            <InfoSelect
+              rotulo="Funil"
+              valor={funilAtual?.id ?? ""}
+              opcoes={funis.map((f) => ({ valor: f.id, rotulo: f.nome }))}
+              onChange={(v) => escolherFunil(Number(v))}
+              desabilitado={leitura}
+            />
+            <InfoSelect
+              rotulo="Etapa"
+              valor={idEtapa ?? ""}
+              opcoes={etapasDoFunil.map((e) => ({ valor: e.id, rotulo: e.nome }))}
+              onChange={(v) => escolherEtapa(Number(v))}
+              desabilitado={leitura}
+            />
           </InfoBox>
+          {!leitura && (
+          <div className="pn-botoes">
+            <button
+              className="pn-botao azul"
+              disabled={!alterado}
+              onClick={(e) =>
+                pedirConfirmacao(e, {
+                  titulo: "Aplicar alteração",
+                  texto: `Mover o atendimento ${conversa.numero} para "${funilAtual?.nome} → ${etapaDe(idEtapa)?.nome}"?`,
+                  acao: aplicar,
+                })
+              }
+            >
+              APLICAR ALTERAÇÃO
+            </button>
+            <button
+              className="pn-botao vermelho"
+              onClick={(e) =>
+                pedirConfirmacao(e, {
+                  titulo: "Finalizar atendimento",
+                  texto: `Finalizar o atendimento ${conversa.numero} de ${conversa.nome}? Esta ação é definitiva.`,
+                  acao: finalizar,
+                })
+              }
+            >
+              FINALIZAR
+            </button>
+          </div>
+          )}
         </InfoSection>
 
         <InfoSection titulo="IA DO ATENDIMENTO" icone={PsychologyOutlined}>
@@ -123,6 +326,24 @@ const Mensagens = () => {
           </InfoBox>
         </InfoSection>
       </InfoPanel>
+
+      <Dialog open={!!confirmar} onClose={() => setConfirmar(null)} fullWidth maxWidth="xs">
+        <DialogTitle>{confirmar?.titulo}</DialogTitle>
+        <DialogContent>{confirmar?.texto}</DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmar(null)}>Cancelar</Button>
+          <Button
+            variant="contained"
+            color={confirmar?.titulo === "Finalizar atendimento" ? "error" : "primary"}
+            onClick={() => {
+              confirmar.acao();
+              setConfirmar(null);
+            }}
+          >
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

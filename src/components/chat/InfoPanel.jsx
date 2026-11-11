@@ -40,12 +40,13 @@ export const InfoBox = ({ destaque, children }) => (
   <div className={`pn-caixa${destaque ? " destaque" : ""}`}>{children}</div>
 );
 
-export const InfoSelect = ({ rotulo, valor, opcoes, onChange }) => (
+// opcoes: strings ou { valor, rotulo }
+export const InfoSelect = ({ rotulo, valor, opcoes, onChange, desabilitado }) => (
   <label className="pn-select">
     <span>{rotulo}</span>
-    <select value={valor} onChange={(e) => onChange(e.target.value)}>
+    <select value={valor} onChange={(e) => onChange(e.target.value)} disabled={desabilitado}>
       {opcoes.map((o) => (
-        <option key={o} value={o}>{o}</option>
+        <option key={o.valor ?? o} value={o.valor ?? o}>{o.rotulo ?? o}</option>
       ))}
     </select>
   </label>

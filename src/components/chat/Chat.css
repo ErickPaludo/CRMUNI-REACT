@@ -202,9 +202,12 @@
 .pn-botoes { display: flex; gap: 8px; margin-top: 10px; }
 .pn-botao { flex: 1; border: 0; border-radius: 8px; padding: 9px; background: #16a34a; color: #fff; font: inherit; font-weight: 700; font-size: 11px; cursor: pointer; }
 .pn-botao.azul { background: #dbeafe; color: #1d4ed8; }
+.pn-botao.vermelho { background: #fee2e2; color: #b91c1c; }
+.pn-botao:disabled { opacity: .5; cursor: not-allowed; }
 .pn-botao.icone { flex: none; background: #fff; border: 1px solid #e2e8f0; color: #475569; padding: 6px 10px; }
 .cv-busca { display: flex; align-items: center; gap: 8px; margin: 0 14px 12px; padding: 0 12px; height: 38px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc; color: #94a3b8; }
 .cv-busca:focus-within { border-color: #2563eb; }
+.cv-busca select { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 13px; color: #0f172a; cursor: pointer; }
 .cv-busca input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 13px; color: #0f172a; }
 .cv-vazio { text-align: center; color: #94a3b8; font-size: 13px; margin-top: 24px; }
 .pn-select { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; color: #94a3b8; }
