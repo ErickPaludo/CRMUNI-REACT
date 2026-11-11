@@ -13,6 +13,9 @@ import SidebarUser from "./SidebarUser";
 import { menuSections } from "./menu";
 import "./Sidebar.css";
 
+// Endereço público do site: o link enviado ao cliente nunca pode sair como localhost (com barra no fim).
+const SITE_URL = import.meta.env.VITE_SITE_URL ?? "https://erickpaludo.github.io/CRMUNI-REACT/";
+
 // shortcut: alertas ainda é placeholder, ligar à API quando existir.
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -28,7 +31,7 @@ const Sidebar = () => {
   const idEmpresa = usuario?.empresaId ?? usuario?.empresa?.id;
   // Sem telefone na rota: o cliente informa o celular no popup da tela de mensagem.
   const compartilhar = async () => {
-    const link = `${window.location.origin}${import.meta.env.BASE_URL}${idEmpresa}/mensagem`;
+    const link = `${SITE_URL}${idEmpresa}/mensagem`;
     try {
       await navigator.clipboard.writeText(link);
       setAviso("Link do chat copiado. Envie para o cliente.");

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useApi } from "./useApi";
 import { useAuth } from "./useAuth";
 
@@ -10,6 +10,7 @@ export function FunisProvider({ children }) {
   const api = useApi();
   const [funis, setFunis] = useState([]);
   const [carregando, setCarregando] = useState(false);
+  const [versao, setVersao] = useState(0); // incrementar = buscar de novo
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -27,9 +28,10 @@ export function FunisProvider({ children }) {
     return () => {
       ativo = false;
     };
-  }, [isAuthenticated, api]);
+  }, [isAuthenticated, api, versao]);
 
-  const value = useMemo(() => ({ funis, carregando }), [funis, carregando]);
+  const recarregar = useCallback(() => setVersao((v) => v + 1), []);
+  const value = useMemo(() => ({ funis, carregando, recarregar }), [funis, carregando, recarregar]);
   return <FunisContext.Provider value={value}>{children}</FunisContext.Provider>;
 }
 

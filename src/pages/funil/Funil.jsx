@@ -10,9 +10,10 @@ import { useFiltroAtendimentos } from "../../components/board/useFiltroAtendimen
 const CORES = ["#6b7280", "#7c3aed", "#2563eb"]; // por `tipo` do funil
 
 const Funil = () => {
-  const { funis, carregando: carregandoFunis } = useFunis();
+  const { funis, carregando: carregandoFunis, recarregar: recarregarFunis } = useFunis();
+  useEffect(recarregarFunis, [recarregarFunis]); // GET /funil ao entrar na tela
   const { atendimentos: todos, carregando: carregandoAtend, recarregar } = useAtendimentos();
-  useEffect(recarregar, [recarregar]); // busca de novo ao entrar na tela
+  useEffect(recarregar, [recarregar]); // GET /atendimento ao entrar na tela
   const { filtrados: atendimentos, filtros } = useFiltroAtendimentos(todos);
 
   if (carregandoFunis || carregandoAtend) {

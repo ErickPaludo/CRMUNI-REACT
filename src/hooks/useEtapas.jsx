@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useApi } from "./useApi";
 import { useAuth } from "./useAuth";
 
@@ -10,6 +10,7 @@ export function EtapasProvider({ children }) {
   const api = useApi();
   const [etapas, setEtapas] = useState([]);
   const [carregando, setCarregando] = useState(false);
+  const [versao, setVersao] = useState(0); // incrementar = buscar de novo
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -26,9 +27,10 @@ export function EtapasProvider({ children }) {
     return () => {
       ativo = false;
     };
-  }, [isAuthenticated, api]);
+  }, [isAuthenticated, api, versao]);
 
-  const value = useMemo(() => ({ etapas, carregando }), [etapas, carregando]);
+  const recarregar = useCallback(() => setVersao((v) => v + 1), []);
+  const value = useMemo(() => ({ etapas, carregando, recarregar }), [etapas, carregando, recarregar]);
   return <EtapasContext.Provider value={value}>{children}</EtapasContext.Provider>;
 }
 

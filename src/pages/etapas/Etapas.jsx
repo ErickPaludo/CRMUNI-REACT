@@ -10,9 +10,10 @@ import { useAtendimentos } from "../../hooks/useAtendimentos";
 const CORES = ["#2563eb", "#059669", "#d5d83d", "#949997", "#1f85c0", "#189114", "#7c3aed", "#df0808"]; // por `tipo` da etapa
 
 const Etapas = () => {
-  const { etapas, carregando: carregandoEtapas } = useEtapas();
+  const { etapas, carregando: carregandoEtapas, recarregar: recarregarEtapas } = useEtapas();
+  useEffect(recarregarEtapas, [recarregarEtapas]); // GET /etapa ao entrar na tela
   const { atendimentos: todos, carregando: carregandoAtend, recarregar } = useAtendimentos();
-  useEffect(recarregar, [recarregar]); // busca de novo ao entrar na tela
+  useEffect(recarregar, [recarregar]); // GET /atendimento ao entrar na tela
   const { filtrados: atendimentos, filtros } = useFiltroAtendimentos(todos);
 
   if (carregandoEtapas || carregandoAtend) {
