@@ -20,7 +20,7 @@ export default function Empresa() {
         <div className="empresa-card">
           <header className="empresa-card-head">
             <div className="empresa-card-icon">
-              <ImageIcon size={16} />
+              <ImageOutlined sx={{ fontSize: 16}} />    
     </div>
     <div>
       <h2>Identidade visual</h2>
@@ -30,7 +30,7 @@ export default function Empresa() {
 
   <div className="empresa-identity">
     <div className="empresa-logo">
-      <Building2 size={40} />
+      <ApartmentOutlined sx={{ fontSize: 40 }} />
   </div>
   <strong className="empresa-name">{empresa.nome}</strong>
   </div>
@@ -39,7 +39,7 @@ export default function Empresa() {
 <div className="empresa-card">
   <header className="empresa-card-head">
     <div className="empresa-card-icon">
-      <Building2 size={16} />
+      <ApartmentOutlined sx={{ fontSize: 16 }} />
     </div>
     <div>
       <h2>Dados da empresa</h2>
