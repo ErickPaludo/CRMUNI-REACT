@@ -3,14 +3,11 @@ import "./Empresa.css";
 import ApartmentOutlined from "@mui/icons-material/ApartmentOutlined";
 import ImageOutlined from "@mui/icons-material/ImageOutlined";
 
-const empresa = {
-  nome: "Academia Movimento",
-  cnpj: "12.345.678/0001-90",
-  telefone: "(11) 3456-7890",
-  email: "contato@movimento.com.br",
-};
+import { useUsuario } from "../../hooks/useUsuario";
+import { formatarTelefone, mascaraCnpj } from "../../utils/formatadores";
 
 export default function Empresa() {
+  const empresa = useUsuario().usuario?.empresa ?? {};
   return (
     <div className="empresa-page">
       <h1 className="empresa-title">Empresa</h1>
@@ -48,10 +45,10 @@ export default function Empresa() {
     </header>
 
     <div className="empresa-fields">
-      <Campo id="nome" label="Nome da empresa" value={empresa.nome} />
-      <Campo id="cnpj" label="CNPJ" value={empresa.cnpj} />
-      <Campo id="telefone" label="Telefone" value={empresa.telefone} />
-      <Campo id="email" label="E-mail" value={empresa.email} />
+      <Campo id="nome" label="Nome da empresa" value={empresa.nome ?? ""} />
+      <Campo id="cnpj" label="CNPJ" value={mascaraCnpj(empresa.cnpj ?? "")} />
+      <Campo id="telefone" label="Telefone" value={formatarTelefone(empresa.telefone ?? "")} />
+      <Campo id="email" label="E-mail" value={empresa.email ?? ""} />
     </div>
   </div>
   </section>
