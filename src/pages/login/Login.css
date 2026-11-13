@@ -99,12 +99,7 @@
     padding: 60px;
     box-sizing: border-box;
     color: #fff;
-    background: linear-gradient(
-        135deg, 
-        #2563eb 0%, 
-        #1e40af 60%, 
-        #1e3a8a 100%
-    );
+    background: #0d1b2a;
 }
 
 .login__right h2{
@@ -112,6 +107,7 @@
     font-family: "Outfit", sans-serif;
     font-size: 36px;
     line-height: 1.2;
+    color: #fff;
 }
 
 .login__right p{
@@ -132,12 +128,14 @@
     margin-bottom: 12px;
     font-size: 15px;
     line-height: 1.5;
+    color: #cbd5e1;
 }
 
 .login__right li::before{
     content: "✓";
     margin-right: 10px;
     font-weight: bold;
+    color: #2563eb;
 }
 
 @media (max-width: 800px){
