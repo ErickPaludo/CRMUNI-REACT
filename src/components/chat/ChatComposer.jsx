@@ -6,9 +6,9 @@ import EmojiEmotionsOutlined from "@mui/icons-material/EmojiEmotionsOutlined";
 import MicNone from "@mui/icons-material/MicNone";
 import "./Chat.css";
 
-// abas/aba/onAba e extras são opcionais: a tela do cliente usa só o campo + enviar.
+// abas/aba/onAba, acao (botão extra ao lado das abas) e extras são opcionais: a tela do cliente usa só o campo + enviar.
 // bloqueado: texto do motivo; desativa o campo (ex.: atendimento encerrado).
-const ChatComposer = ({ onEnviar, abas, aba, onAba, extras = false, bloqueado }) => {
+const ChatComposer = ({ onEnviar, abas, aba, onAba, acao, extras = false, bloqueado }) => {
   const [texto, setTexto] = useState("");
 
   const enviar = (e) => {
@@ -24,10 +24,11 @@ const ChatComposer = ({ onEnviar, abas, aba, onAba, extras = false, bloqueado })
       {abas && (
         <div className="chat-abas">
           {abas.map((a) => (
-            <button key={a} type="button" className={`chat-aba${a === aba ? " ativa" : ""}`} onClick={() => onAba(a)}>
+            <button key={a} type="button" className={`chat-aba${a === aba ? " ativa" : ""}`} onClick={() => onAba?.(a)}>
               {a}
             </button>
           ))}
+          {acao}
         </div>
       )}
       <form className="chat-envio" onSubmit={enviar}>
