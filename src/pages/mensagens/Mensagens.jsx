@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { useAuth } from "../../hooks/useAuth";
+import { useApi } from "../../hooks/useApi";
+import { useUsuario } from "../../hooks/useUsuario";
+import { useSetores } from "../../hooks/useSetores";
 import { useAtendimentos } from "../../hooks/useAtendimentos";
 import { useFunis } from "../../hooks/useFunis";
 import { useEtapas } from "../../hooks/useEtapas";
@@ -21,6 +24,7 @@ import { rastrear } from "../../hooks/carregamento";
 import ChatHeader from "../../components/chat/ChatHeader";
 import ChatMessageList from "../../components/chat/ChatMessageList";
 import ChatComposer from "../../components/chat/ChatComposer";
+import MensagensRapidas from "../../components/chat/MensagensRapidas";
 import ConversationList from "../../components/chat/ConversationList";
 import ChatAvatar from "../../components/chat/ChatAvatar";
 import { InfoPanel, InfoSection, InfoRow, InfoBox, InfoSelect, Tag, TagGroup } from "../../components/chat/InfoPanel";
@@ -29,6 +33,9 @@ import "./Mensagens.css";
 // Classificação do cliente = tipo do funil da etapa atual (EFunil da API)
 const CLASSIFICACAO = { 0: "Curioso", 1: "Potencial Cliente", 2: "Vendido" };
 const porOrdem = (a, b) => a.ordem - b.ordem;
+const SETOR_COMERCIAL = 0; // ESetor.Comercial
+const textoPlano = (p) =>
+  `${p.nome} - ${Number(p.preco).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n${p.descricao ?? ""}`;
 
 // AtendimentoDto do hub -> formato do ConversationList
 const daConversa = (a) => ({
@@ -77,10 +84,14 @@ const ChatAtendente = ({ tokenRef, leitura }) => {
   // Com :id na rota não cai em outra conversa: atendimento finalizado não está na lista e não aceita mensagens.
   const conversa = id ? conversas.find((c) => String(c.id) === id) : conversas[0];
   const ativaId = conversa?.id;
-  const [aba, setAba] = useState("Mensagem");
   const [porConversa, setPorConversa] = useState({});
   const mensagens = porConversa[ativaId] ?? [];
   const hub = useRef(null);
+  const api = useApi();
+  const { usuario } = useUsuario();
+  const { setores } = useSetores();
+  // o GET /funcionario traz só id/nome do setor; o tipo vem da lista de setores
+  const comercial = setores.find((s) => s.id === usuario?.setor?.id)?.tipo === SETOR_COMERCIAL;
 
   // Etapa salva (a gravada nesta tela tem prioridade até o GET /atendimento recarregar)
   // e rascunho (escolhido nos selects, só grava ao confirmar "Aplicar alteração").
@@ -119,6 +130,16 @@ const ChatAtendente = ({ tokenRef, leitura }) => {
         recarregar();
       })
       .catch((e) => setErro(mensagemErro(e)));
+
+  // Uma mensagem por plano ativo: a API limita cada mensagem a 1000 caracteres.
+  const enviarPlanos = () =>
+    rastrear(
+      api.get("/plano").then(async (r) => {
+        const ativos = (r?.planos ?? []).filter((p) => p.situacao === 0);
+        if (!ativos.length) throw new Error("Nenhum plano ativo para enviar.");
+        for (const p of ativos) await hub.current.invoke("EnviarMensagem", ativaId, textoPlano(p));
+      }),
+    ).catch((e) => setErro(mensagemErro(e)));
 
   // Funcionário: EncerrarAtendimento finaliza no banco (definitivo), com o cliente online ou não.
   const finalizar = () =>
@@ -181,9 +202,6 @@ const ChatAtendente = ({ tokenRef, leitura }) => {
   }, [ativaId, leitura]);
 
   const enviar = (texto) => {
-    // shortcut: anotações internas ficam só em memória; gravar quando a API tiver o endpoint.
-    if (aba !== "Mensagem")
-      return adicionar(ativaId, { id: crypto.randomUUID(), texto, hora: hora(), meu: true, iniciais: "AN", cor: "ia", remetente: "Anotação interna" });
     hub.current?.invoke("EnviarMensagem", ativaId, texto).catch((e) => setErro(mensagemErro(e)));
   };
 
@@ -236,7 +254,32 @@ const ChatAtendente = ({ tokenRef, leitura }) => {
         {leitura ? (
           <ChatComposer onEnviar={enviar} bloqueado="Modo acompanhamento: administradores não enviam mensagens." />
         ) : (
-          <ChatComposer abas={["Mensagem", "Anotações internas"]} aba={aba} onAba={setAba} onEnviar={enviar} extras />
+          <ChatComposer
+            abas={["Mensagem"]}
+            aba="Mensagem"
+            onEnviar={enviar}
+            extras
+            acao={
+              <>
+              {usuario?.id && <MensagensRapidas key={usuario.id} idFuncionario={usuario.id} onEnviar={enviar} />}
+              {comercial && (
+                <button
+                  type="button"
+                  className="chat-aba"
+                  onClick={(e) =>
+                    pedirConfirmacao(e, {
+                      titulo: "Enviar planos",
+                      texto: `Enviar todos os planos ativos para ${conversa.nome}?`,
+                      acao: enviarPlanos,
+                    })
+                  }
+                >
+                  Enviar planos
+                </button>
+              )}
+              </>
+            }
+          />
         )}
       </section>
 

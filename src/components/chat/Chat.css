@@ -213,3 +213,14 @@
 .pn-select { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; color: #94a3b8; }
 .pn-select select { height: 34px; padding: 0 8px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; color: #0f172a; font: inherit; font-size: 12px; font-weight: 500; outline: 0; cursor: pointer; }
 .pn-select select:focus { border-color: #2563eb; }
+
+.rapidas { width: 320px; max-width: calc(100vw - 32px); padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+.rapidas-vazio { margin: 0; color: #64748b; font-size: 13px; }
+.rapidas-item { display: flex; align-items: flex-start; gap: 4px; }
+.rapidas-texto { flex: 1; text-align: left; border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 8px; padding: 8px 10px;
+  font: inherit; font-size: 13px; cursor: pointer; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 90px; overflow: auto; }
+.rapidas-texto:hover { border-color: #2563eb; }
+.rapidas-remover { border: 0; background: transparent; color: #94a3b8; cursor: pointer; padding: 6px; }
+.rapidas-nova { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.rapidas-nova textarea { border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px; font: inherit; font-size: 13px; resize: vertical; }
+.rapidas-nova button { align-self: flex-end; }
